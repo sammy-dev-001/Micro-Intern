@@ -48,8 +48,9 @@ export default function ProjectList() {
   const [projects, setProjects] = useState<any[]>([]);
 
   useEffect(() => {
-    // Try to fetch from backend
-    fetch('http://localhost:3001/api/projects')
+    // Try to fetch from backend using env var or localhost
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+    fetch(`${apiUrl}/api/projects`)
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data) && data.length > 0) {

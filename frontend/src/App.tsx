@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 
 // Pages
 import Home from './pages/Home';
@@ -18,6 +19,7 @@ import ProjectCompletion from './pages/project/ProjectCompletion';
 function App() {
   return (
     <Router>
+      <Toaster position="top-center" toastOptions={{ style: { fontSize: '14px', fontWeight: 600 } }} />
       <div className="app-container">
         <main className="main-content">
           <Routes>

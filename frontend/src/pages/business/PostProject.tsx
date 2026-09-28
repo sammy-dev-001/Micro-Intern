@@ -1,9 +1,48 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Zap, Building2, CheckCircle2, Lock, X, Rocket, Compass, FolderKanban, PlusCircle, User } from 'lucide-react';
+import toast from 'react-hot-toast';
 import './PostProject.css';
 
 export default function PostProject() {
+  const navigate = useNavigate();
   const [duration, setDuration] = useState('3 days');
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [budget, setBudget] = useState('15,000');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async () => {
+    if (!title || !description) {
+      toast.error('Please fill out the title and instructions.');
+      return;
+    }
+    setIsSubmitting(true);
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+      const response = await fetch(`${apiUrl}/api/projects`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          business_id: 1, // Mock business ID
+          title,
+          description,
+          budget: parseInt(budget.replace(/,/g, '')),
+          duration_days: parseInt(duration) || 3
+        })
+      });
+
+      if (response.ok) {
+        toast.success('Project posted successfully!');
+        navigate('/projects'); // Go back to explore to see it
+      } else {
+        toast.error('Failed to post project.');
+      }
+    } catch (error) {
+      toast.error('Network error. Is the backend running?');
+    }
+    setIsSubmitting(false);
+  };
 
   return (
     <div className="post-project-container">
@@ -18,7 +57,7 @@ export default function PostProject() {
         </div>
         <div className="header-actions">
           <div className="toggle-group">
-            <button className="toggle-btn">Student</button>
+            <button className="toggle-btn" onClick={() => navigate('/student/dashboard')}>Student</button>
             <button className="toggle-btn active">Business</button>
           </div>
           <div className="avatar-mini">
@@ -50,9 +89,16 @@ export default function PostProject() {
         <div className="form-section">
           <div className="form-label-row">
             <label className="form-label">1. Project Title</label>
-            <span className="label-hint">0/60</span>
+            <span className="label-hint">{title.length}/60</span>
           </div>
-          <input type="text" className="form-input" placeholder="e.g. Organise 500 customer records" />
+          <input 
+            type="text" 
+            className="form-input" 
+            placeholder="e.g. Organise 500 customer records"
+            value={title}
+            onChange={e => setTitle(e.target.value)}
+            maxLength={60}
+          />
         </div>
 
         <div className="form-section">
@@ -79,7 +125,12 @@ export default function PostProject() {
           </div>
           <div className="budget-input-wrapper">
             <span className="budget-symbol">₦</span>
-            <input type="text" className="form-input" defaultValue="15,000" />
+            <input 
+              type="text" 
+              className="form-input" 
+              value={budget}
+              onChange={e => setBudget(e.target.value)}
+            />
           </div>
           <p className="form-help-text">Paid securely to student upon your review and work approval.</p>
         </div>
@@ -108,7 +159,9 @@ export default function PostProject() {
           </div>
           <textarea 
             className="instructions-textarea"
-            defaultValue={`1. Download CSV raw data.\n2. Remove duplicate emails.\n3. Format phone numbers to international\nstandard.`}
+            placeholder="1. Download CSV raw data..."
+            value={description}
+            onChange={e => setDescription(e.target.value)}
           ></textarea>
           <p className="form-help-text">Step-by-step instructions dramatically increase completion rate and quality.</p>
         </div>
@@ -117,7 +170,7 @@ export default function PostProject() {
         <div className="cost-summary-card">
           <div className="summary-top">
             <h4>COST SUMMARY</h4>
-            <strong>Budget: ₦15,000</strong>
+            <strong>Budget: ₦{budget}</strong>
           </div>
           <ul className="summary-list" style={{listStyle: 'none', padding: 0, margin: 0}}>
             <li><CheckCircle2 size={14} color="#047857" /> Escrow Protected: Funds held until your final sign-off</li>
@@ -125,8 +178,8 @@ export default function PostProject() {
           </ul>
         </div>
 
-        <button className="btn-publish">
-          <Rocket size={18} /> Publish Project
+        <button className="btn-publish" onClick={handleSubmit} disabled={isSubmitting}>
+          <Rocket size={18} /> {isSubmitting ? 'Publishing...' : 'Publish Project'}
         </button>
         <p className="publish-hint">Matches average university applicants in &lt; 14 minutes</p>
       </main>
