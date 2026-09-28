@@ -1,0 +1,102 @@
+.completion-container {
+  max-width: 480px;
+  margin: 0 auto;
+  background-color: var(--bg-main);
+  min-height: 100vh;
+  padding-bottom: 32px;
+}
+
+/* Header */
+.completion-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: var(--bg-main);
+}
+.header-left { display: flex; align-items: center; gap: 12px; }
+.back-btn { background: none; border: none; cursor: pointer; color: var(--text-dark); display: flex; align-items: center; }
+.details-logo { width: 28px; height: 28px; border-radius: 6px; object-fit: contain; }
+.completion-header h2 { font-size: 16px; margin: 0; font-weight: 600; }
+.avatar-circle { width: 32px; height: 32px; background: black; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; }
+
+/* Stage Banner */
+.stage-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+}
+.stage-info { display: flex; align-items: center; gap: 12px; }
+.check-circle-green { width: 32px; height: 32px; background: #6ee7b7; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #064e3b; }
+.stage-text h4 { font-size: 10px; color: #64748b; letter-spacing: 1px; font-weight: 600; text-transform: uppercase; margin-bottom: 2px; }
+.stage-text h1 { font-size: 16px; color: #0f172a; margin: 0; }
+.pending-tag { background: #dbeafe; color: #475569; font-size: 11px; padding: 6px 10px; border-radius: 6px; text-align: center; line-height: 1.2; }
+
+/* Review Card */
+.review-card {
+  background: white;
+  margin: 0 16px 16px 16px;
+  padding: 20px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+.review-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+.review-section-title { font-size: 10px; color: #94a3b8; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; }
+.escrow-label { font-size: 10px; color: #64748b; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; text-align: right; margin-bottom: 2px; }
+.escrow-amt { font-size: 16px; font-weight: 700; color: #0f172a; }
+
+.review-card h2 { font-size: 18px; margin-bottom: 16px; }
+.student-profile-row { display: flex; align-items: center; gap: 12px; }
+.student-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+.student-info h4 { font-size: 14px; color: #0f172a; margin-bottom: 2px; }
+.student-info p { font-size: 11px; color: #475569; margin: 0; }
+
+/* Submission Box */
+.submission-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.submitted-time { font-size: 11px; color: #047857; display: flex; align-items: center; gap: 4px; }
+.green-dot { width: 6px; height: 6px; background: #10b981; border-radius: 50%; }
+
+.file-row { display: flex; justify-content: space-between; align-items: center; background: #f1f5f9; padding: 12px; border-radius: var(--radius-sm); margin-bottom: 12px; }
+.file-left { display: flex; align-items: center; gap: 12px; }
+.file-icon { width: 36px; height: 36px; background: #e2e8f0; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #0f172a; }
+.file-text h5 { font-size: 13px; font-weight: 500; margin-bottom: 2px; }
+.file-text p { font-size: 11px; color: #64748b; margin: 0; }
+.btn-preview { background: #dbeafe; color: #1e3a8a; border: none; padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 6px; cursor: pointer; }
+
+.notes-box { background: #eff6ff; padding: 16px; border-radius: var(--radius-sm); }
+.notes-label { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #64748b; margin-bottom: 8px; }
+.notes-box p { font-size: 13px; color: #0f172a; margin: 0; line-height: 1.5; }
+
+/* Feedback Box */
+.feedback-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+.feedback-text h3 { font-size: 15px; margin-bottom: 4px; }
+.feedback-text p { font-size: 12px; color: #475569; margin: 0; line-height: 1.4; max-width: 220px; }
+.score-tag { background: #6ee7b7; color: #064e3b; font-size: 12px; font-weight: 700; padding: 6px 10px; border-radius: 6px; text-align: center; }
+
+.stars-row { display: flex; gap: 12px; margin-bottom: 24px; }
+.star-icon { color: #0f172a; }
+
+.endorsement-box { background: #f1f5f9; padding: 16px; border-radius: var(--radius-sm); }
+.endorsement-box p { font-size: 13px; color: #0f172a; line-height: 1.5; margin: 0; }
+
+/* Release Banner */
+.release-banner { background: #6ee7b7; margin: 0 16px 16px 16px; padding: 16px; border-radius: var(--radius-md); display: flex; align-items: center; gap: 12px; }
+.release-icon { background: #047857; color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.release-banner p { color: #064e3b; font-size: 12px; margin: 0; line-height: 1.4; }
+
+/* Actions */
+.payout-actions { padding: 0 16px; display: flex; flex-direction: column; gap: 16px; margin-top: 16px; }
+.btn-approve { background: #000; color: white; border: none; border-radius: var(--radius-sm); padding: 16px; font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; }
+.btn-revision { background: none; color: #475569; border: none; font-size: 14px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; }
+
+@media (min-width: 768px) {
+  .completion-container { max-width: 800px; border-left: 1px solid var(--border-light); border-right: 1px solid var(--border-light); }
+  .review-card, .release-banner, .stage-banner { margin-left: 32px; margin-right: 32px; }
+  .payout-actions { padding: 0 32px; }
+}
