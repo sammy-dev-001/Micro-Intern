@@ -50,6 +50,7 @@ export default function SignUpStudent() {
   const navigate = useNavigate();
   const [profileType, setProfileType] = useState('student');
   const [isLogin, setIsLogin] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleContinue = (e: React.FormEvent) => {
     e.preventDefault();
@@ -150,10 +151,19 @@ export default function SignUpStudent() {
         </div>
 
         <div className="form-group">
-          <label>Create Password</label>
+          <label>{isLogin ? 'Password' : 'Create Password'}</label>
           <div className="input-with-icon">
-            <input type="password" placeholder="Minimum 8 characters" required />
-            <EyeIcon />
+            <input 
+              type={showPassword ? "text" : "password"} 
+              placeholder="Minimum 8 characters" 
+              required 
+            />
+            <div 
+              style={{cursor: 'pointer', display: 'flex', alignItems: 'center'}} 
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              <EyeIcon />
+            </div>
           </div>
         </div>
 
