@@ -52,6 +52,14 @@ const ProfileIcon = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="
 export default function StudentDashboard() {
   const navigate = useNavigate();
   const [data, setData] = useState<any>(null);
+  const [skills, setSkills] = useState(['Excel', 'Data Entry', 'Data Cleaning', 'Google Sheets', 'Python Basics']);
+
+  const handleAddSkill = () => {
+    const newSkill = window.prompt("Enter a new skill:");
+    if (newSkill && newSkill.trim()) {
+      setSkills([...skills, newSkill.trim()]);
+    }
+  };
 
   useEffect(() => {
     const fetchDashboard = async () => {
@@ -112,7 +120,7 @@ export default function StudentDashboard() {
               </div>
             </div>
             <div className="profile-info">
-              <h1>Tobi Adebayo <VerifiedCheck /></h1>
+              <h1>{data.user?.name || 'Loading...'} <VerifiedCheck /></h1>
               <p className="subtitle">Computer Science Undergraduate • Data & Excel Specialist</p>
               <div className="uni-row">
                 <GradCapIconMini /> University of Lagos
@@ -144,7 +152,7 @@ export default function StudentDashboard() {
         <div className="credential-box">
           <div className="cred-text">
             <span>PUBLIC CREDENTIAL</span>
-            <p>microintern.io/p/tobi-adebayo</p>
+            <p>microintern.io/p/{data.user?.name ? data.user.name.toLowerCase().replace(/\s+/g, '-') : 'loading'}</p>
           </div>
           <button className="btn-share-sm">
             <ShareIcon /> Share
@@ -155,10 +163,10 @@ export default function StudentDashboard() {
         <div>
           <div className="section-header">
             <h3><CompIcon /> Core Competencies</h3>
-            <button className="add-skill-btn">Add Skill +</button>
+            <button className="add-skill-btn" onClick={handleAddSkill}>Add Skill +</button>
           </div>
           <div className="skills-container">
-            {['Excel', 'Data Entry', 'Data Cleaning', 'Google Sheets', 'Python Basics'].map(skill => (
+            {skills.map(skill => (
               <div key={skill} className="skill-tag">
                 <div className="skill-dot"></div> {skill}
               </div>
@@ -222,7 +230,7 @@ export default function StudentDashboard() {
           <ExploreIcon />
           <span>Explore</span>
         </button>
-        <button className="nav-item" onClick={() => navigate('/student/dashboard')}>
+        <button className="nav-item" onClick={() => navigate('/workspace/1')}>
           <CheckCircleIcon />
           <span>My Projects</span>
         </button>

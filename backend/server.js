@@ -46,6 +46,8 @@ app.get('/api/users/:id/dashboard', async (req, res) => {
     const studentId = req.params.id;
     const db = await getDBConnection();
     
+    const user = await db.get(`SELECT name FROM users WHERE id = ?`, studentId);
+    
     const stats = await db.get(`
       SELECT 
         COUNT(p.id) as projects_completed,
@@ -68,6 +70,9 @@ app.get('/api/users/:id/dashboard', async (req, res) => {
     `, studentId);
 
     res.json({
+      user: {
+        name: user ? user.name : 'Unknown User'
+      },
       stats: {
         earnings: stats.total_earnings || 0,
         projects: stats.projects_completed || 0,
