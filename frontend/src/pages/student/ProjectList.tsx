@@ -74,10 +74,6 @@ export default function ProjectList() {
           </div>
         </div>
         <div className="header-actions">
-          <div className="toggle-group">
-            <button className="toggle-btn active">Student</button>
-            <button className="toggle-btn">Business</button>
-          </div>
           <div className="avatar-mini">
             <User size={16} />
           </div>
@@ -128,7 +124,7 @@ export default function ProjectList() {
               )}
             </div>
             <div className="price-row">
-              <div className="price-val">₦{(project.budget || 0).toLocaleString()} <span className="price-type">/ fixed</span></div>
+              <div className="price-val">{(project.budget || 0).toLocaleString()} <span className="price-type">pts / fixed</span></div>
               <div className="duration-val"><Clock size={12} /> {project.duration_days} days</div>
             </div>
             <div className="card-footer">
@@ -152,10 +148,6 @@ export default function ProjectList() {
         <button className="nav-item" onClick={() => navigate('/student/dashboard')}>
           <FolderKanban size={20} />
           <span>My Projects</span>
-        </button>
-        <button className="nav-item" onClick={() => navigate('/business/project/new')}>
-          <PlusCircle size={20} />
-          <span>Post</span>
         </button>
         <button className="nav-item" onClick={() => navigate('/student/dashboard')}>
           <User size={20} />

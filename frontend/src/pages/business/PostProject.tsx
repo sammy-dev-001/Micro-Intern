@@ -56,10 +56,6 @@ export default function PostProject() {
           </div>
         </div>
         <div className="header-actions">
-          <div className="toggle-group">
-            <button className="toggle-btn" onClick={() => navigate('/student/dashboard')}>Student</button>
-            <button className="toggle-btn active">Business</button>
-          </div>
           <div className="avatar-mini">
             <User size={16} />
           </div>
@@ -120,19 +116,18 @@ export default function PostProject() {
 
         <div className="form-section">
           <div className="form-label-row">
-            <label className="form-label">3. Budget (₦)</label>
-            <span className="escrow-label"><Lock size={12} /> 100% Escrow</span>
+            <label className="form-label">3. Points Reward</label>
           </div>
           <div className="budget-input-wrapper">
-            <span className="budget-symbol">₦</span>
             <input 
               type="text" 
               className="form-input" 
+              placeholder="e.g. 500"
               value={budget}
               onChange={e => setBudget(e.target.value)}
             />
           </div>
-          <p className="form-help-text">Paid securely to student upon your review and work approval.</p>
+          <p className="form-help-text">Points will be awarded upon task approval.</p>
         </div>
 
         <div className="form-section">
@@ -169,12 +164,12 @@ export default function PostProject() {
         {/* Cost Summary */}
         <div className="cost-summary-card">
           <div className="summary-top">
-            <h4>COST SUMMARY</h4>
-            <strong>Budget: ₦{budget}</strong>
+            <h4>PROJECT SUMMARY</h4>
+            <strong>Points: {budget}</strong>
           </div>
           <ul className="summary-list" style={{listStyle: 'none', padding: 0, margin: 0}}>
-            <li><CheckCircle2 size={14} color="#047857" /> Escrow Protected: Funds held until your final sign-off</li>
-            <li><CheckCircle2 size={14} color="#047857" /> No platform fee until milestone accepted</li>
+            <li><CheckCircle2 size={14} color="#047857" /> Task goes live immediately</li>
+            <li><CheckCircle2 size={14} color="#047857" /> Points distributed upon final sign-off</li>
           </ul>
         </div>
 
@@ -186,19 +181,19 @@ export default function PostProject() {
 
       {/* Bottom Nav */}
       <nav className="bottom-nav">
-        <button className="nav-item">
+        <button className="nav-item" onClick={() => navigate('/projects')}>
           <Compass size={20} />
           <span>Explore</span>
         </button>
-        <button className="nav-item">
+        <button className="nav-item" onClick={() => navigate('/business/dashboard')}>
           <FolderKanban size={20} />
           <span>My Projects</span>
         </button>
-        <button className="nav-item active">
+        <button className="nav-item active" onClick={() => navigate('/business/project/new')}>
           <PlusCircleIcon />
           <span>Post</span>
         </button>
-        <button className="nav-item">
+        <button className="nav-item" onClick={() => navigate('/student/dashboard')}>
           <User size={20} />
           <span>Profile</span>
         </button>

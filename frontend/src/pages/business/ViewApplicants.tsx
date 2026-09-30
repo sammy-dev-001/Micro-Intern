@@ -1,10 +1,59 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Compass, FolderKanban, PlusCircle, User, Sparkles, Bookmark, Star, CheckCircle, ChevronLeft, Lock, ArrowRight } from 'lucide-react';
+import toast from 'react-hot-toast';
 import './ViewApplicants.css';
 
 export default function ViewApplicants() {
   const navigate = useNavigate();
+  const { id } = useParams();
+  const [project, setProject] = useState<any>(null);
+  const [applicants, setApplicants] = useState<any[]>([]);
+  const [isSelecting, setIsSelecting] = useState(false);
+
+  useEffect(() => {
+    const fetchProjectAndApplicants = async () => {
+      try {
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+        
+        const projRes = await fetch(`${apiUrl}/api/projects/${id}`);
+        if (projRes.ok) {
+          setProject(await projRes.json());
+        }
+
+        const appRes = await fetch(`${apiUrl}/api/projects/${id}/applications`);
+        if (appRes.ok) {
+          setApplicants(await appRes.json());
+        }
+      } catch (err) {
+        console.error("Error fetching data", err);
+      }
+    };
+    fetchProjectAndApplicants();
+  }, [id]);
+
+  const handleSelectApplicant = async (applicationId: number) => {
+    setIsSelecting(true);
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+      const res = await fetch(`${apiUrl}/api/projects/${id}/select-applicant`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ application_id: applicationId })
+      });
+      if (res.ok) {
+        toast.success("Student selected! Moving to workspace.");
+        navigate(`/workspace/${id}`);
+      } else {
+        toast.error("Failed to select applicant.");
+      }
+    } catch (err) {
+      toast.error("Network error");
+    }
+    setIsSelecting(false);
+  };
+
+  if (!project) return <div style={{padding: '2rem'}}>Loading...</div>;
 
   return (
     <div className="applicants-container">
@@ -18,10 +67,6 @@ export default function ViewApplicants() {
           </div>
         </div>
         <div className="header-actions">
-          <div className="toggle-group">
-            <button className="toggle-btn">Student</button>
-            <button className="toggle-btn active">Business</button>
-          </div>
           <div className="avatar-mini">
             <User size={16} />
           </div>
@@ -34,13 +79,13 @@ export default function ViewApplicants() {
           <span className="status-tag">
             <div className="green-dot"></div> Active Review
           </span>
-          <span className="applicants-count">3 Applicants</span>
+          <span className="applicants-count">{applicants.length} Applicants</span>
         </div>
-        <h1>Organise 500 customer records</h1>
+        <h1>{project.title}</h1>
         <div className="project-meta">
-          <span className="price">₦15,000</span>
+          <span className="price">{project.budget?.toLocaleString()} pts</span>
           <span>•</span>
-          <span><span style={{fontFamily: 'monospace'}}>3</span> days delivery</span>
+          <span><span style={{fontFamily: 'monospace'}}>{project.duration_days}</span> days delivery</span>
         </div>
       </div>
 
@@ -51,98 +96,53 @@ export default function ViewApplicants() {
 
       <main className="candidate-list">
         
-        {/* Candidate 1 - Top Match */}
-        <div className="candidate-card">
-          <div className="candidate-card-top">
-            <div className="candidate-info-row">
-              <img src="https://i.pravatar.cc/150?u=a042581f4e29026704d" alt="Tobi" className="candidate-avatar" />
-              <div className="candidate-info">
-                <h2>Tobi Adebayo <span className="tag-top-match">Top Match</span></h2>
-                <p>B.Sc. Computer Science • Unilag</p>
-                <div className="candidate-rating">
-                  <Star size={12} className="star-icon" fill="currentColor" /> 5.0 (6 reviews)
+        {applicants.length === 0 ? (
+          <div style={{padding: '2rem', textAlign: 'center', color: '#64748b'}}>
+            No applicants yet. Check back soon!
+          </div>
+        ) : (
+          applicants.map((app, idx) => (
+            <div className="candidate-card" key={app.id}>
+              <div className="candidate-card-top">
+                <div className="candidate-info-row">
+                  <img src={`https://i.pravatar.cc/150?u=${app.student_id}`} alt="Student" className="candidate-avatar" />
+                  <div className="candidate-info">
+                    <h2>{app.student_name || 'Student'} {idx === 0 && <span className="tag-top-match">Top Match</span>}</h2>
+                    <p>Applicant</p>
+                    <div className="candidate-rating">
+                      <Star size={12} className="star-icon" fill="currentColor" /> 5.0
+                    </div>
+                  </div>
                 </div>
+                <button className="bookmark-btn"><Bookmark size={20} /></button>
               </div>
-            </div>
-            <button className="bookmark-btn"><Bookmark size={20} /></button>
-          </div>
-          
-          <div className="top-rated-banner">
-            <CheckCircle size={14} /> Top Rated • 6 Micro-Projects Completed
-          </div>
-          
-          <div className="quote-box">
-            "I've worked on 2 similar database cleaning gigs on MicroIntern. Available to deliver within 24 hours."
-          </div>
-          
-          <div className="candidate-skills">
-            <span className="skill-tag">Excel</span>
-            <span className="skill-tag">Data Cleaning</span>
-            <span className="skill-tag">Google Sheets</span>
-          </div>
-          
-          <button className="btn-select-main" onClick={() => navigate('/workspace/1')}>
-            Select Student & Start Task <ArrowRight size={18} />
-          </button>
-          <a className="link-portfolio">View Full Portfolio</a>
-        </div>
-
-        {/* Candidate 2 */}
-        <div className="candidate-card">
-          <div className="candidate-card-top">
-            <div className="candidate-info-row">
-              <img src="https://i.pravatar.cc/150?u=a04258114e29026702d" alt="Chioma" className="candidate-avatar" />
-              <div className="candidate-info">
-                <h2>Chioma Nwosu</h2>
-                <p>Economics Student</p>
-                <div className="candidate-rating">
-                  <Star size={12} className="star-icon" /> 4.8 (3 projects)
+              
+              {idx === 0 && (
+                <div className="top-rated-banner">
+                  <CheckCircle size={14} /> Top Rated
                 </div>
+              )}
+              
+              <div className="quote-box">
+                "{app.pitch}"
               </div>
-            </div>
-            <button className="bookmark-btn"><Bookmark size={20} /></button>
-          </div>
-          <div className="candidate-skills">
-            <span className="skill-tag">Data Entry</span>
-            <span className="skill-tag">Excel</span>
-          </div>
-          <div className="small-actions">
-            <button className="btn-view-profile">View Profile</button>
-            <button className="btn-select-small">Select</button>
-          </div>
-        </div>
-
-        {/* Candidate 3 */}
-        <div className="candidate-card">
-          <div className="candidate-card-top">
-            <div className="candidate-info-row">
-              <img src="https://i.pravatar.cc/150?u=a042581f4e29026703d" alt="Ibrahim" className="candidate-avatar" />
-              <div className="candidate-info">
-                <h2>Ibrahim Sani <span className="tag-new-talent">New Talent</span></h2>
-                <p>Undergraduate Applicant</p>
-                <div className="first-project-label">
-                  <ChevronLeft size={12} /> First Micro-Project
-                </div>
+              
+              <div className="candidate-skills">
+                <span className="skill-tag">General</span>
               </div>
+              
+              <button 
+                className="btn-select-main" 
+                onClick={() => handleSelectApplicant(app.id)}
+                disabled={isSelecting}
+              >
+                {isSelecting ? 'Selecting...' : 'Select Student & Start Task'} <ArrowRight size={18} />
+              </button>
             </div>
-            <button className="bookmark-btn"><Bookmark size={20} /></button>
-          </div>
-          <div className="candidate-skills">
-            <span className="skill-tag">Excel</span>
-            <span className="skill-tag">Typing (65 WPM)</span>
-          </div>
-          <div className="small-actions">
-            <button className="btn-view-profile">View Profile</button>
-            <button className="btn-select-small">Select</button>
-          </div>
-        </div>
+          ))
+        )}
 
       </main>
-
-      <div className="escrow-notice-bottom">
-        <Lock size={16} className="lock-icon" />
-        <p>Funds are secured in MicroIntern Escrow until you approve the completed record cleaning.</p>
-      </div>
 
       {/* Bottom Nav */}
       <nav className="bottom-nav">
@@ -150,7 +150,7 @@ export default function ViewApplicants() {
           <Compass size={20} />
           <span>Explore</span>
         </button>
-        <button className="nav-item active">
+        <button className="nav-item active" onClick={() => navigate('/business/dashboard')}>
           <FolderKanban size={20} />
           <span>My Projects</span>
         </button>

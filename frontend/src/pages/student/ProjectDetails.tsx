@@ -1,10 +1,60 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowLeft, User, Users, CheckCircle2, Star, Banknote, Clock, FileSpreadsheet, Sparkles, Link, Upload, Shield, Bookmark } from 'lucide-react';
 import './ProjectDetails.css';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 export default function ProjectDetails() {
   const navigate = useNavigate();
+  const { id } = useParams();
+  
+  const [project, setProject] = useState<any>(null);
+  const [pitch, setPitch] = useState("Experienced with Excel VLOOKUP and data hygiene. Ready to start immediately.");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    const fetchProject = async () => {
+      try {
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+        const res = await fetch(`${apiUrl}/api/projects/${id}`);
+        if (res.ok) {
+          const data = await res.json();
+          setProject(data);
+        }
+      } catch (err) {
+        console.error("Failed to fetch project", err);
+      }
+    };
+    fetchProject();
+  }, [id]);
+
+  const handleSubmit = async () => {
+    if (!pitch) return toast.error("Please enter a pitch");
+    setIsSubmitting(true);
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+      const res = await fetch(`${apiUrl}/api/applications`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          project_id: id,
+          student_id: 1, // Mock student ID
+          pitch: pitch
+        })
+      });
+      if (res.ok) {
+        toast.success("Application submitted successfully!");
+        navigate('/projects');
+      } else {
+        toast.error("Failed to submit application");
+      }
+    } catch (err) {
+      toast.error("Network error");
+    }
+    setIsSubmitting(false);
+  };
+
+  if (!project) return <div style={{padding: '2rem'}}>Loading...</div>;
 
   return (
     <div className="project-details-container">
@@ -26,46 +76,46 @@ export default function ProjectDetails() {
         <div className="status-row">
           <div className="status-left">
             <span className="sprint-tag">
-              <div className="sprint-dot"></div> Active Sprint
+              <div className="sprint-dot"></div> {project.status === 'open' ? 'Active Sprint' : 'Closed'}
             </span>
-            <span className="posted-time">Posted 2h ago</span>
+            <span className="posted-time">Just now</span>
           </div>
           <div className="applicants-count">
-            <Users size={14} /> 4 Applicants
+            <Users size={14} /> ? Applicants
           </div>
         </div>
 
-        <h1 className="project-title">Organise 500 customer records</h1>
+        <h1 className="project-title">{project.title}</h1>
 
         <div className="company-box">
           <div className="company-logo">N</div>
           <div className="company-info">
-            <h4>Nexus Retail Ltd <CheckCircle2 size={16} fill="#047857" color="white" /></h4>
+            <h4>{project.business_name || 'Business'} <CheckCircle2 size={16} fill="#047857" color="white" /></h4>
             <div className="company-meta">
               <span className="star-rating"><Star size={12} fill="currentColor" /> 4.9</span>
               <span>•</span>
               <span>Verified Business</span>
               <span>•</span>
-              <span>Lagos (Remote)</span>
+              <span>Remote</span>
             </div>
           </div>
         </div>
 
         <div className="info-grid">
           <div className="info-box">
-            <span className="info-label"><Banknote size={12} color="#047857" /> PAYOUT</span>
-            <span className="info-val">₦15,000</span>
+            <span className="info-label"><Banknote size={12} color="#047857" /> REWARD</span>
+            <span className="info-val">{project.budget?.toLocaleString()} pts</span>
             <span className="info-sub green">Upon approval</span>
           </div>
           <div className="info-box">
             <span className="info-label"><Clock size={12} color="#475569" /> TIMELINE</span>
-            <span className="info-val">3 Days</span>
-            <span className="info-sub">Fri, 6:00 PM</span>
+            <span className="info-val">{project.duration_days} Days</span>
+            <span className="info-sub">Flexible</span>
           </div>
           <div className="info-box">
             <span className="info-label"><FileSpreadsheet size={12} color="#475569" /> DATASET</span>
-            <span className="info-val">500 rows</span>
-            <span className="info-sub">Deduplication</span>
+            <span className="info-val">Task Data</span>
+            <span className="info-sub">Provided</span>
           </div>
         </div>
 
@@ -75,40 +125,8 @@ export default function ProjectDetails() {
             <span className="milestone-badge">Milestone 1/1</span>
           </div>
           <p className="task-desc">
-            Cleanse and consolidate customer contact lists from 3 separate CSV exports into a single master sheet with standard formatting and deduplicated phone numbers.
+            {project.description}
           </p>
-          <div className="checklist">
-            <div className="check-item">
-              <CheckCircle2 size={16} color="#047857" />
-              <span>Normalize phone numbers to international standard format (+234...)</span>
-            </div>
-            <div className="check-item">
-              <CheckCircle2 size={16} color="#047857" />
-              <span>Identify and eliminate exact & fuzzy duplicates across 3 source sheets</span>
-            </div>
-            <div className="check-item">
-              <CheckCircle2 size={16} color="#047857" />
-              <span>Export final deliverable as clean .xlsx with separate error audit tab</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="detail-card">
-          <h3>Required Capabilities</h3>
-          <div className="cap-tags" style={{marginTop: 12}}>
-            <span className="cap-tag">
-              <FileSpreadsheet size={14} /> Excel
-            </span>
-            <span className="cap-tag">
-              <FileSpreadsheet size={14} /> Data Entry
-            </span>
-            <span className="cap-tag">
-              <FileSpreadsheet size={14} /> Data Cleaning
-            </span>
-            <span className="cap-tag">
-              Σ VLOOKUP / XLOOKUP
-            </span>
-          </div>
         </div>
 
         <div className="detail-card">
@@ -117,31 +135,12 @@ export default function ProjectDetails() {
           
           <div className="textarea-header">
             <span>Why you're a fit (2 sentences)</span>
-            <span>78/140</span>
           </div>
           <textarea 
             className="pitch-textarea"
-            defaultValue="Experienced with Excel VLOOKUP and data hygiene. Ready to start immediately."
+            value={pitch}
+            onChange={(e) => setPitch(e.target.value)}
           ></textarea>
-
-          <div className="textarea-header">
-            <span>Attach proof of work / sample</span>
-            <span>Optional</span>
-          </div>
-          <div className="attach-row">
-            <div className="attach-input-wrapper">
-              <Link size={16} className="link-icon" />
-              <input type="text" defaultValue="https://drive.google.com/file/d/1xK-spread" />
-            </div>
-            <button className="upload-btn">
-              <Upload size={18} />
-            </button>
-          </div>
-
-          <div className="escrow-banner">
-            <Shield size={20} color="#047857" />
-            <p>Escrow Protected: Nexus Retail Ltd has pre-funded the ₦15,000 bounty with MicroIntern.</p>
-          </div>
         </div>
       </main>
 
@@ -149,8 +148,8 @@ export default function ProjectDetails() {
         <button className="btn-bookmark">
           <Bookmark size={20} />
         </button>
-        <button className="btn-submit">
-          Submit Application <span className="price-badge">₦15,000</span>
+        <button className="btn-submit" onClick={handleSubmit} disabled={isSubmitting}>
+          {isSubmitting ? 'Submitting...' : 'Submit Application'} <span className="price-badge">{project.budget?.toLocaleString()} pts</span>
         </button>
       </div>
     </div>

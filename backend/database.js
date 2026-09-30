@@ -42,6 +42,17 @@ async function setupDatabase() {
       FOREIGN KEY (project_id) REFERENCES projects (id),
       FOREIGN KEY (student_id) REFERENCES users (id)
     );
+
+    CREATE TABLE IF NOT EXISTS deliverables (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      project_id INTEGER,
+      student_id INTEGER,
+      link TEXT,
+      notes TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (project_id) REFERENCES projects (id),
+      FOREIGN KEY (student_id) REFERENCES users (id)
+    );
   `);
   
   return db;

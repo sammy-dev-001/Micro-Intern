@@ -53,9 +53,9 @@ export default function SignUpStudent() {
   const handleContinue = (e: React.FormEvent) => {
     e.preventDefault();
     if (profileType === 'student') {
-      navigate('/student/dashboard');
+      navigate('/projects'); // Explore screen
     } else {
-      navigate('/business/dashboard');
+      navigate('/projects'); // Explore screen
     }
   };
 
@@ -73,7 +73,7 @@ export default function SignUpStudent() {
       {/* Hero Text */}
       <div className="hero-section">
         <h1>Real work. Verified experience.</h1>
-        <p>Connect students with forward-thinking businesses for short, paid milestone projects.</p>
+        <p>Connect students with forward-thinking businesses for short milestone projects.</p>
       </div>
 
       {/* Profile Selection */}
@@ -96,10 +96,10 @@ export default function SignUpStudent() {
               <h3>I'm a Student / Young Pro</h3>
               {profileType === 'student' ? <CheckCircleIcon /> : <div className="radio-circle"></div>}
             </div>
-            <p>Gain experience, complete 2-5 day paid tasks, and build an on-chain verified track record.</p>
+            <p>Gain experience, complete 2-5 day tasks, and build an on-chain verified track record.</p>
             <div className="card-tags">
               <span className="tag tag-blue">Flexible gigs</span>
-              <span className="tag tag-green">Direct payouts</span>
+              <span className="tag tag-green">Direct rewards</span>
             </div>
           </div>
         </div>
@@ -117,9 +117,9 @@ export default function SignUpStudent() {
               <h3>I'm a Business</h3>
               {profileType === 'business' ? <CheckCircleIcon /> : <div className="radio-circle"></div>}
             </div>
-            <p>Delegate sprint tasks, set budgets in ₦, and hire pre-vetted campus talent without recruitment friction.</p>
+            <p>Delegate sprint tasks, reward with points, and hire pre-vetted campus talent without recruitment friction.</p>
             <div className="card-tags">
-              <span className="tag tag-gray">Escrow-backed</span>
+              <span className="tag tag-gray">Quality assured</span>
               <span className="tag tag-gray">Fast deliverables</span>
             </div>
           </div>
@@ -168,7 +168,7 @@ export default function SignUpStudent() {
       </form>
 
       <p className="footer-text">
-        By clicking continue, you accept the <a>Terms of Service</a> & <a>Escrow Agreement</a>.
+        By clicking continue, you accept the <a>Terms of Service</a> & <a>Privacy Policy</a>.
       </p>
     </div>
   );

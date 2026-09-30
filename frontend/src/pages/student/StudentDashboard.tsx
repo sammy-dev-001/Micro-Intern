@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import './StudentDashboard.css';
 
 // SVG Icons
@@ -49,6 +50,8 @@ const PlusCircleIcon = () => <svg width="20" height="20" viewBox="0 0 24 24" fil
 const ProfileIcon = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>;
 
 export default function StudentDashboard() {
+  const navigate = useNavigate();
+
   return (
     <div className="dashboard-container">
       {/* Header */}
@@ -61,10 +64,6 @@ export default function StudentDashboard() {
           </div>
         </div>
         <div className="header-actions">
-          <div className="toggle-group">
-            <button className="toggle-btn active">Student</button>
-            <button className="toggle-btn">Business</button>
-          </div>
           <div className="avatar-mini">
             <ProfileIcon />
           </div>
@@ -78,7 +77,7 @@ export default function StudentDashboard() {
             <VerifiedBadgeBig />
             <div className="banner-text">
               <h4>Flow 4 Completed!</h4>
-              <p>Work logged & payout cleared</p>
+              <p>Work logged & approved</p>
             </div>
           </div>
           <button style={{background:'none', border:'none', cursor:'pointer'}}>
@@ -106,8 +105,8 @@ export default function StudentDashboard() {
 
           <div className="stats-grid">
             <div className="stat-box">
-              <span>Earned</span>
-              <strong>₦65k</strong>
+              <span>Points</span>
+              <strong>650</strong>
             </div>
             <div className="stat-box">
               <span>Projects</span>
@@ -164,7 +163,6 @@ export default function StudentDashboard() {
                 <span className="verified-tag"><VerifiedCheck /> Verified Record</span>
                 <span className="date-text">Yesterday</span>
               </div>
-              <span className="price-tag">₦15,000</span>
             </div>
             <h4>Organise 500 customer records</h4>
             <p className="company-text">Nexus Retail Ltd • E-commerce Operations</p>
@@ -174,7 +172,7 @@ export default function StudentDashboard() {
                 <div className="stars">
                   <StarIcon/><StarIcon/><StarIcon/><StarIcon/><StarIcon/>
                 </div>
-                <span className="review-status">Confirmed Payment</span>
+                <span className="review-status">Confirmed Approval</span>
               </div>
               <p className="review-text">“Excellent work! Fast turnaround and very clean formatting.”</p>
               <span className="reviewer-name">By Chidi O., Ops Lead</span>
@@ -193,7 +191,6 @@ export default function StudentDashboard() {
                 <span className="verified-tag"><VerifiedCheck /> Verified Record</span>
                 <span className="date-text">Nov 24</span>
               </div>
-              <span className="price-tag">₦20,000</span>
             </div>
             <h4>Inventory SKU Standardization</h4>
             <p className="company-text">Lagos Logistics Hub • Supply Chain</p>
@@ -203,7 +200,7 @@ export default function StudentDashboard() {
                 <div className="stars">
                   <StarIcon/><StarIcon/><StarIcon/><StarIcon/><StarIcon/>
                 </div>
-                <span className="review-status">Confirmed Payment</span>
+                <span className="review-status">Confirmed Approval</span>
               </div>
               <p className="review-text">“Great attention to detail.”</p>
               <span className="reviewer-name">By Funke B., Inventory Mgr</span>
@@ -225,19 +222,15 @@ export default function StudentDashboard() {
 
       {/* Bottom Nav */}
       <nav className="bottom-nav">
-        <button className="nav-item">
+        <button className="nav-item" onClick={() => navigate('/projects')}>
           <ExploreIcon />
           <span>Explore</span>
         </button>
-        <button className="nav-item">
+        <button className="nav-item" onClick={() => navigate('/student/dashboard')}>
           <CheckCircleIcon />
           <span>My Projects</span>
         </button>
-        <button className="nav-item">
-          <PlusCircleIcon />
-          <span>Post</span>
-        </button>
-        <button className="nav-item active">
+        <button className="nav-item active" onClick={() => navigate('/student/dashboard')}>
           <ProfileIcon />
           <span>Profile</span>
         </button>

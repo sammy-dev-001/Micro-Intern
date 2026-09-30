@@ -113,6 +113,61 @@ app.get('/api/projects/:id/applications', async (req, res) => {
   }
 });
 
+// --- WORKSPACE & DELIVERABLES ROUTES ---
+app.post('/api/projects/:id/select-applicant', async (req, res) => {
+  try {
+    const { application_id } = req.body;
+    const db = await getDBConnection();
+    await db.run('UPDATE applications SET status = ? WHERE id = ?', ['accepted', application_id]);
+    await db.run('UPDATE projects SET status = ? WHERE id = ?', ['in_progress', req.params.id]);
+    res.json({ success: true, project_id: req.params.id });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/api/projects/:id/deliverables', async (req, res) => {
+  try {
+    const { student_id, link, notes } = req.body;
+    const db = await getDBConnection();
+    await db.run(
+      'INSERT INTO deliverables (project_id, student_id, link, notes) VALUES (?, ?, ?, ?)',
+      [req.params.id, student_id, link, notes]
+    );
+    await db.run('UPDATE projects SET status = ? WHERE id = ?', ['review', req.params.id]);
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/projects/:id/deliverable', async (req, res) => {
+  try {
+    const db = await getDBConnection();
+    const deliverable = await db.get(`
+      SELECT d.*, u.name as student_name 
+      FROM deliverables d
+      JOIN users u ON d.student_id = u.id
+      WHERE d.project_id = ?
+      ORDER BY d.created_at DESC LIMIT 1
+    `, req.params.id);
+    if (!deliverable) return res.status(404).json({ error: 'Deliverable not found' });
+    res.json(deliverable);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/api/projects/:id/approve', async (req, res) => {
+  try {
+    const db = await getDBConnection();
+    await db.run('UPDATE projects SET status = ? WHERE id = ?', ['completed', req.params.id]);
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Backend server running at http://localhost:${PORT}`);
 });
