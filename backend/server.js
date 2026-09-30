@@ -41,6 +41,46 @@ app.get('/api/users/:id', async (req, res) => {
   }
 });
 
+app.get('/api/users/:id/dashboard', async (req, res) => {
+  try {
+    const studentId = req.params.id;
+    const db = await getDBConnection();
+    
+    const stats = await db.get(`
+      SELECT 
+        COUNT(p.id) as projects_completed,
+        SUM(p.budget) as total_earnings
+      FROM projects p
+      JOIN applications a ON p.id = a.project_id
+      WHERE a.student_id = ? AND a.status = 'accepted' AND p.status = 'completed'
+    `, studentId);
+
+    const history = await db.all(`
+      SELECT 
+        p.title, p.budget, p.business_id, u.name as business_name, 
+        d.link as deliverable_link, d.created_at as completed_at
+      FROM projects p
+      JOIN applications a ON p.id = a.project_id
+      JOIN users u ON p.business_id = u.id
+      LEFT JOIN deliverables d ON p.id = d.project_id AND d.student_id = a.student_id
+      WHERE a.student_id = ? AND a.status = 'accepted' AND p.status = 'completed'
+      ORDER BY p.id DESC
+    `, studentId);
+
+    res.json({
+      stats: {
+        earnings: stats.total_earnings || 0,
+        projects: stats.projects_completed || 0,
+        rating: 5.0,
+        onTime: 100
+      },
+      history
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // --- PROJECT ROUTES ---
 app.post('/api/projects', async (req, res) => {
   try {

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './StudentDashboard.css';
 
@@ -51,6 +51,23 @@ const ProfileIcon = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="
 
 export default function StudentDashboard() {
   const navigate = useNavigate();
+  const [data, setData] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchDashboard = async () => {
+      try {
+        const studentId = 1; // Assuming student ID 1 for now
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+        const res = await fetch(`${apiUrl}/api/users/${studentId}/dashboard`);
+        if (res.ok) setData(await res.json());
+      } catch (err) {
+        console.error("Failed to fetch dashboard", err);
+      }
+    };
+    fetchDashboard();
+  }, []);
+
+  if (!data) return <div style={{padding: '2rem'}}>Loading...</div>;
 
   return (
     <div className="dashboard-container">
@@ -106,19 +123,19 @@ export default function StudentDashboard() {
           <div className="stats-grid">
             <div className="stat-box">
               <span>Earnings</span>
-              <strong>₦15,000</strong>
+              <strong>₦{data.stats.earnings.toLocaleString()}</strong>
             </div>
             <div className="stat-box">
               <span>Projects</span>
-              <strong>5</strong>
+              <strong>{data.stats.projects}</strong>
             </div>
             <div className="stat-box">
               <span>Rating</span>
-              <strong>5.0 <span className="text-green">☆</span></strong>
+              <strong>{data.stats.rating.toFixed(1)} <span className="text-green">☆</span></strong>
             </div>
             <div className="stat-box">
               <span>On-Time</span>
-              <strong className="text-green">100%</strong>
+              <strong className="text-green">{data.stats.onTime}%</strong>
             </div>
           </div>
         </div>
@@ -153,64 +170,43 @@ export default function StudentDashboard() {
         <div>
           <div className="section-header">
             <h3><VerifiedCheck /> Verified Work History</h3>
-            <span className="records-count">5 records</span>
+            <span className="records-count">{data.history.length} records</span>
           </div>
 
-          {/* Record 1 */}
-          <div className="history-card">
-            <div className="history-card-header">
-              <div className="history-tag-row">
-                <span className="verified-tag"><VerifiedCheck /> Verified Record</span>
-                <span className="date-text">Yesterday</span>
-              </div>
-            </div>
-            <h4>Organise 500 customer records</h4>
-            <p className="company-text">Nexus Retail Ltd • E-commerce Operations</p>
-            
-            <div className="review-box">
-              <div className="review-top">
-                <div className="stars">
-                  <StarIcon/><StarIcon/><StarIcon/><StarIcon/><StarIcon/>
+          {data.history.map((record: any, index: number) => (
+            <div key={index} className="history-card">
+              <div className="history-card-header">
+                <div className="history-tag-row">
+                  <span className="verified-tag"><VerifiedCheck /> Verified Record</span>
+                  <span className="date-text">{new Date(record.completed_at).toLocaleDateString()}</span>
                 </div>
-                <span className="review-status">Confirmed Approval</span>
               </div>
-              <p className="review-text">“Excellent work! Fast turnaround and very clean formatting.”</p>
-              <span className="reviewer-name">By Chidi O., Ops Lead</span>
-            </div>
-            
-            <div className="output-row">
-              <PaperclipIcon />
-              <span>Output: cleaned_records_final.xlsx (500 rows)</span>
-            </div>
-          </div>
-
-          {/* Record 2 */}
-          <div className="history-card">
-            <div className="history-card-header">
-              <div className="history-tag-row">
-                <span className="verified-tag"><VerifiedCheck /> Verified Record</span>
-                <span className="date-text">Nov 24</span>
-              </div>
-            </div>
-            <h4>Inventory SKU Standardization</h4>
-            <p className="company-text">Lagos Logistics Hub • Supply Chain</p>
-            
-            <div className="review-box">
-              <div className="review-top">
-                <div className="stars">
-                  <StarIcon/><StarIcon/><StarIcon/><StarIcon/><StarIcon/>
+              <h4>{record.title}</h4>
+              <p className="company-text">{record.business_name}</p>
+              
+              <div className="review-box">
+                <div className="review-top">
+                  <div className="stars">
+                    <StarIcon/><StarIcon/><StarIcon/><StarIcon/><StarIcon/>
+                  </div>
+                  <span className="review-status">Confirmed Approval</span>
                 </div>
-                <span className="review-status">Confirmed Approval</span>
+                <p className="review-text">“Great work on this task!”</p>
+                <span className="reviewer-name">By {record.business_name}</span>
               </div>
-              <p className="review-text">“Great attention to detail.”</p>
-              <span className="reviewer-name">By Funke B., Inventory Mgr</span>
+              
+              <div className="output-row">
+                <PaperclipIcon />
+                <span>Output: {record.deliverable_link || 'Submitted Deliverable'}</span>
+              </div>
             </div>
-            
-            <div className="output-row">
-              <PaperclipIcon />
-              <span>Output: sku_catalog_v2.csv</span>
-            </div>
-          </div>
+          ))}
+          
+          {data.history.length === 0 && (
+            <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '1rem'}}>
+              No verified work history yet. Complete your first project to build your credential!
+            </p>
+          )}
         </div>
 
         {/* Share Verified Portfolio */}
