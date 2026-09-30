@@ -49,6 +49,7 @@ const ArrowRightIcon = () => (
 export default function SignUpStudent() {
   const navigate = useNavigate();
   const [profileType, setProfileType] = useState('student');
+  const [isLogin, setIsLogin] = useState(false);
 
   const handleContinue = (e: React.FormEvent) => {
     e.preventDefault();
@@ -126,25 +127,19 @@ export default function SignUpStudent() {
         </div>
       </div>
 
-      {/* Google Auth */}
-      <button className="btn-google" type="button">
-        <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" width={18} />
-        Continue with Google
-      </button>
 
-      <div className="divider">
-        <span>OR SIGN UP WITH EMAIL</span>
-      </div>
 
       {/* Form */}
       <form onSubmit={handleContinue} className="signup-form">
-        <div className="form-group">
-          <label>Full Legal Name</label>
-          <div className="input-with-icon">
-            <input type="text" placeholder="e.g. Tunde Adeyemi" required />
-            <UserIcon />
+        {!isLogin && (
+          <div className="form-group">
+            <label>Full Legal Name</label>
+            <div className="input-with-icon">
+              <input type="text" placeholder="e.g. Tunde Adeyemi" required />
+              <UserIcon />
+            </div>
           </div>
-        </div>
+        )}
 
         <div className="form-group">
           <label>Institutional or Work Email</label>
@@ -163,9 +158,15 @@ export default function SignUpStudent() {
         </div>
 
         <button type="submit" className="btn-primary">
-          Continue as {profileType === 'student' ? 'Student' : 'Business'} <ArrowRightIcon />
+          {isLogin ? 'Sign In' : `Continue as ${profileType === 'student' ? 'Student' : 'Business'}`} <ArrowRightIcon />
         </button>
       </form>
+
+      <div style={{textAlign: 'center', marginTop: '1rem'}}>
+        <p style={{fontSize: '0.9rem', color: '#64748b', cursor: 'pointer'}} onClick={() => setIsLogin(!isLogin)}>
+          {isLogin ? "Don't have an account? Sign Up" : "Already have an account? Sign In"}
+        </p>
+      </div>
 
       <p className="footer-text">
         By clicking continue, you accept the <a>Terms of Service</a> & <a>Privacy Policy</a>.
