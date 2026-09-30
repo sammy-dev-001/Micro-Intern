@@ -117,7 +117,7 @@ export default function SignUpStudent() {
               <h3>I'm a Business</h3>
               {profileType === 'business' ? <CheckCircleIcon /> : <div className="radio-circle"></div>}
             </div>
-            <p>Delegate sprint tasks, reward with points, and hire pre-vetted campus talent without recruitment friction.</p>
+            <p>Delegate sprint tasks, reward with cash, and hire pre-vetted campus talent without recruitment friction.</p>
             <div className="card-tags">
               <span className="tag tag-gray">Quality assured</span>
               <span className="tag tag-gray">Fast deliverables</span>

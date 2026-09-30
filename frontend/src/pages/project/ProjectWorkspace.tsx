@@ -83,7 +83,7 @@ export default function ProjectWorkspace() {
           <Building2 size={12} color="#64748b" />
           <span>{project.business_name || 'Business'}</span>
           <span>•</span>
-          <span className="price">{project.budget?.toLocaleString()} pts</span>
+          <span className="price">₦{project.budget?.toLocaleString()}</span>
         </div>
       </div>
 

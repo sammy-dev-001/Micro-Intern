@@ -124,7 +124,7 @@ export default function ProjectList() {
               )}
             </div>
             <div className="price-row">
-              <div className="price-val">{(project.budget || 0).toLocaleString()} <span className="price-type">pts / fixed</span></div>
+              <div className="price-val">₦{(project.budget || 0).toLocaleString()} <span className="price-type">fixed</span></div>
               <div className="duration-val"><Clock size={12} /> {project.duration_days} days</div>
             </div>
             <div className="card-footer">

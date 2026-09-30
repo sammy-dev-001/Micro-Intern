@@ -105,8 +105,8 @@ export default function StudentDashboard() {
 
           <div className="stats-grid">
             <div className="stat-box">
-              <span>Points</span>
-              <strong>650</strong>
+              <span>Earnings</span>
+              <strong>₦15,000</strong>
             </div>
             <div className="stat-box">
               <span>Projects</span>

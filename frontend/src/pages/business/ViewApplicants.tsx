@@ -83,7 +83,7 @@ export default function ViewApplicants() {
         </div>
         <h1>{project.title}</h1>
         <div className="project-meta">
-          <span className="price">{project.budget?.toLocaleString()} pts</span>
+          <span className="price">₦{project.budget?.toLocaleString()}</span>
           <span>•</span>
           <span><span style={{fontFamily: 'monospace'}}>{project.duration_days}</span> days delivery</span>
         </div>

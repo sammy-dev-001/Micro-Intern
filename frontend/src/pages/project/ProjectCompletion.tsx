@@ -38,7 +38,7 @@ export default function ProjectCompletion() {
         method: 'POST'
       });
       if (res.ok) {
-        toast.success("Project approved and points awarded!");
+        toast.success("Project approved and payment awarded!");
         navigate('/business/dashboard');
       } else {
         toast.error("Failed to approve project");
@@ -89,7 +89,7 @@ export default function ProjectCompletion() {
           <span className="review-section-title">PROJECT SCOPE</span>
           <div style={{display: 'flex', flexDirection: 'column'}}>
             <span className="escrow-label">REWARD</span>
-            <span className="escrow-amt">{project.budget?.toLocaleString()} pts</span>
+            <span className="escrow-amt">₦{project.budget?.toLocaleString()}</span>
           </div>
         </div>
         <h2>{project.title}</h2>
@@ -158,13 +158,13 @@ export default function ProjectCompletion() {
         <div className="release-icon">
           <ShieldCheck size={18} />
         </div>
-        <p><strong>{project.budget?.toLocaleString()} pts</strong> will be instantly awarded to {deliverable?.student_name || 'the student'}.</p>
+        <p><strong>₦{project.budget?.toLocaleString()}</strong> will be instantly awarded to {deliverable?.student_name || 'the student'}.</p>
       </div>
 
       {/* Actions */}
       <div className="payout-actions">
         <button className="btn-approve" onClick={handleApprove} disabled={isApproving}>
-          <CheckCircle2 size={20} /> {isApproving ? 'Approving...' : `Approve & Award ${project.budget?.toLocaleString()} pts`}
+          <CheckCircle2 size={20} /> {isApproving ? 'Approving...' : `Approve & Award ₦${project.budget?.toLocaleString()}`}
         </button>
         <button className="btn-revision">
           <RefreshCcw size={16} /> Request Minor Revision

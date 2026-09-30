@@ -116,7 +116,7 @@ export default function PostProject() {
 
         <div className="form-section">
           <div className="form-label-row">
-            <label className="form-label">3. Points Reward</label>
+            <label className="form-label">3. Cash Reward</label>
           </div>
           <div className="budget-input-wrapper">
             <input 
@@ -127,7 +127,7 @@ export default function PostProject() {
               onChange={e => setBudget(e.target.value)}
             />
           </div>
-          <p className="form-help-text">Points will be awarded upon task approval.</p>
+          <p className="form-help-text">Payment will be released upon task approval.</p>
         </div>
 
         <div className="form-section">
@@ -165,11 +165,11 @@ export default function PostProject() {
         <div className="cost-summary-card">
           <div className="summary-top">
             <h4>PROJECT SUMMARY</h4>
-            <strong>Points: {budget}</strong>
+            <strong>Reward: ₦{budget}</strong>
           </div>
           <ul className="summary-list" style={{listStyle: 'none', padding: 0, margin: 0}}>
             <li><CheckCircle2 size={14} color="#047857" /> Task goes live immediately</li>
-            <li><CheckCircle2 size={14} color="#047857" /> Points distributed upon final sign-off</li>
+            <li><CheckCircle2 size={14} color="#047857" /> Payment distributed upon final sign-off</li>
           </ul>
         </div>
 

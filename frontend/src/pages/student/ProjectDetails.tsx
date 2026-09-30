@@ -104,7 +104,7 @@ export default function ProjectDetails() {
         <div className="info-grid">
           <div className="info-box">
             <span className="info-label"><Banknote size={12} color="#047857" /> REWARD</span>
-            <span className="info-val">{project.budget?.toLocaleString()} pts</span>
+            <span className="info-val">₦{project.budget?.toLocaleString()}</span>
             <span className="info-sub green">Upon approval</span>
           </div>
           <div className="info-box">
@@ -149,7 +149,7 @@ export default function ProjectDetails() {
           <Bookmark size={20} />
         </button>
         <button className="btn-submit" onClick={handleSubmit} disabled={isSubmitting}>
-          {isSubmitting ? 'Submitting...' : 'Submit Application'} <span className="price-badge">{project.budget?.toLocaleString()} pts</span>
+          {isSubmitting ? 'Submitting...' : 'Submit Application'} <span className="price-badge">₦{project.budget?.toLocaleString()}</span>
         </button>
       </div>
     </div>
