@@ -15,25 +15,77 @@ setupDatabase().then(() => {
   console.error('Database setup failed:', err);
 });
 
-// --- USER ROUTES ---
-app.post('/api/users', async (req, res) => {
+// ============================================================
+// --- AUTH ROUTES ---
+// ============================================================
+
+// Register a new user
+app.post('/api/auth/register', async (req, res) => {
   try {
-    const { name, email, type } = req.body;
+    const { name, email, password, type,
+            // Student fields
+            university, course, year_of_study, bio,
+            // Business fields
+            company_name, industry, company_size, website } = req.body;
+
+    if (!name || !email || !password || !type) {
+      return res.status(400).json({ error: 'Name, email, password, and type are required.' });
+    }
+
     const db = await getDBConnection();
+
+    // Check if email already exists
+    const existing = await db.get('SELECT id FROM users WHERE email = ?', email);
+    if (existing) {
+      return res.status(409).json({ error: 'An account with this email already exists.' });
+    }
+
     const result = await db.run(
-      'INSERT INTO users (name, email, type) VALUES (?, ?, ?)',
-      [name, email, type]
+      `INSERT INTO users (name, email, password, type, university, course, year_of_study, bio, company_name, industry, company_size, website) 
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [name, email, password, type, university || null, course || null, year_of_study || null, bio || null,
+       company_name || null, industry || null, company_size || null, website || null]
     );
-    res.status(201).json({ id: result.lastID, name, email, type });
+    
+    const user = await db.get('SELECT id, name, email, type, university, course, company_name, industry FROM users WHERE id = ?', result.lastID);
+    res.status(201).json({ user });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 });
 
+// Login
+app.post('/api/auth/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password are required.' });
+    }
+    const db = await getDBConnection();
+    const user = await db.get(
+      'SELECT id, name, email, type, university, course, company_name, industry FROM users WHERE email = ? AND password = ?',
+      [email, password]
+    );
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid email or password.' });
+    }
+    res.json({ user });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ============================================================
+// --- USER ROUTES ---
+// ============================================================
+
 app.get('/api/users/:id', async (req, res) => {
   try {
     const db = await getDBConnection();
-    const user = await db.get('SELECT * FROM users WHERE id = ?', req.params.id);
+    const user = await db.get(
+      'SELECT id, name, email, type, university, course, year_of_study, bio, company_name, industry, created_at FROM users WHERE id = ?',
+      req.params.id
+    );
     if (!user) return res.status(404).json({ error: 'User not found' });
     res.json(user);
   } catch (error) {
@@ -46,7 +98,10 @@ app.get('/api/users/:id/dashboard', async (req, res) => {
     const studentId = req.params.id;
     const db = await getDBConnection();
     
-    const user = await db.get(`SELECT name FROM users WHERE id = ?`, studentId);
+    const user = await db.get(
+      `SELECT name, university, course, year_of_study, bio FROM users WHERE id = ?`,
+      studentId
+    );
     
     const stats = await db.get(`
       SELECT 
@@ -71,7 +126,10 @@ app.get('/api/users/:id/dashboard', async (req, res) => {
 
     res.json({
       user: {
-        name: user ? user.name : 'Unknown User'
+        name: user ? user.name : 'Unknown User',
+        university: user ? user.university : null,
+        course: user ? user.course : null,
+        bio: user ? user.bio : null,
       },
       stats: {
         earnings: stats.total_earnings || 0,
@@ -86,7 +144,28 @@ app.get('/api/users/:id/dashboard', async (req, res) => {
   }
 });
 
+// Business dashboard - get all projects for a business
+app.get('/api/users/:id/projects', async (req, res) => {
+  try {
+    const businessId = req.params.id;
+    const db = await getDBConnection();
+    const projects = await db.all(`
+      SELECT p.*, 
+        (SELECT COUNT(*) FROM applications a WHERE a.project_id = p.id) as applicant_count
+      FROM projects p
+      WHERE p.business_id = ?
+      ORDER BY p.created_at DESC
+    `, businessId);
+    res.json(projects);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ============================================================
 // --- PROJECT ROUTES ---
+// ============================================================
+
 app.post('/api/projects', async (req, res) => {
   try {
     const { business_id, title, description, budget, duration_days } = req.body;
@@ -104,11 +183,12 @@ app.post('/api/projects', async (req, res) => {
 app.get('/api/projects', async (req, res) => {
   try {
     const db = await getDBConnection();
-    // Get all projects with business details
     const projects = await db.all(`
-      SELECT p.*, u.name as business_name 
+      SELECT p.*, u.name as business_name,
+        (SELECT COUNT(*) FROM applications a WHERE a.project_id = p.id) as applicant_count
       FROM projects p 
       JOIN users u ON p.business_id = u.id
+      WHERE p.status = 'open'
       ORDER BY p.created_at DESC
     `);
     res.json(projects);
@@ -120,7 +200,12 @@ app.get('/api/projects', async (req, res) => {
 app.get('/api/projects/:id', async (req, res) => {
   try {
     const db = await getDBConnection();
-    const project = await db.get('SELECT * FROM projects WHERE id = ?', req.params.id);
+    const project = await db.get(`
+      SELECT p.*, u.name as business_name 
+      FROM projects p 
+      JOIN users u ON p.business_id = u.id
+      WHERE p.id = ?
+    `, req.params.id);
     if (!project) return res.status(404).json({ error: 'Project not found' });
     res.json(project);
   } catch (error) {
@@ -128,11 +213,21 @@ app.get('/api/projects/:id', async (req, res) => {
   }
 });
 
+// ============================================================
 // --- APPLICATION ROUTES ---
+// ============================================================
+
 app.post('/api/applications', async (req, res) => {
   try {
     const { project_id, student_id, pitch } = req.body;
     const db = await getDBConnection();
+
+    // Prevent duplicate applications
+    const existing = await db.get('SELECT id FROM applications WHERE project_id = ? AND student_id = ?', [project_id, student_id]);
+    if (existing) {
+      return res.status(409).json({ error: 'You have already applied to this project.' });
+    }
+
     const result = await db.run(
       'INSERT INTO applications (project_id, student_id, pitch) VALUES (?, ?, ?)',
       [project_id, student_id, pitch]
@@ -147,7 +242,7 @@ app.get('/api/projects/:id/applications', async (req, res) => {
   try {
     const db = await getDBConnection();
     const applications = await db.all(`
-      SELECT a.*, u.name as student_name 
+      SELECT a.*, u.name as student_name, u.university, u.course
       FROM applications a 
       JOIN users u ON a.student_id = u.id 
       WHERE a.project_id = ?
@@ -158,7 +253,10 @@ app.get('/api/projects/:id/applications', async (req, res) => {
   }
 });
 
+// ============================================================
 // --- WORKSPACE & DELIVERABLES ROUTES ---
+// ============================================================
+
 app.post('/api/projects/:id/select-applicant', async (req, res) => {
   try {
     const { application_id } = req.body;

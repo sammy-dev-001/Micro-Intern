@@ -3,10 +3,12 @@ import { ArrowLeft, User, Users, CheckCircle2, Star, Banknote, Clock, FileSpread
 import './ProjectDetails.css';
 import { useNavigate, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import { getSession } from '../../utils/session';
 
 export default function ProjectDetails() {
   const navigate = useNavigate();
   const { id } = useParams();
+  const session = getSession();
   
   const [project, setProject] = useState<any>(null);
   const [pitch, setPitch] = useState("Experienced with Excel VLOOKUP and data hygiene. Ready to start immediately.");
@@ -30,6 +32,7 @@ export default function ProjectDetails() {
 
   const handleSubmit = async () => {
     if (!pitch) return toast.error("Please enter a pitch");
+    if (!session) return toast.error("Please sign in first.");
     setIsSubmitting(true);
     try {
       const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
@@ -38,15 +41,16 @@ export default function ProjectDetails() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           project_id: id,
-          student_id: 1, // Mock student ID
+          student_id: session.id,
           pitch: pitch
         })
       });
+      const data = await res.json();
       if (res.ok) {
         toast.success("Application submitted successfully!");
         navigate('/projects');
       } else {
-        toast.error("Failed to submit application");
+        toast.error(data.error || "Failed to submit application");
       }
     } catch (err) {
       toast.error("Network error");

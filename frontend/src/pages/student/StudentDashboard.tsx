@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './StudentDashboard.css';
+import { getSession, clearSession } from '../../utils/session';
 
 // SVG Icons
 const VerifiedCheck = () => (
@@ -51,6 +52,7 @@ const ProfileIcon = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="
 
 export default function StudentDashboard() {
   const navigate = useNavigate();
+  const session = getSession();
   const [data, setData] = useState<any>(null);
   const [skills, setSkills] = useState(['Excel', 'Data Entry', 'Data Cleaning', 'Google Sheets', 'Python Basics']);
 
@@ -62,11 +64,14 @@ export default function StudentDashboard() {
   };
 
   useEffect(() => {
+    if (!session) {
+      navigate('/auth/student/signup');
+      return;
+    }
     const fetchDashboard = async () => {
       try {
-        const studentId = 1; // Assuming student ID 1 for now
         const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
-        const res = await fetch(`${apiUrl}/api/users/${studentId}/dashboard`);
+        const res = await fetch(`${apiUrl}/api/users/${session.id}/dashboard`);
         if (res.ok) setData(await res.json());
       } catch (err) {
         console.error("Failed to fetch dashboard", err);

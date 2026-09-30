@@ -3,10 +3,12 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, User, Clock, CheckCircle2, FileText, X, Link, ShieldCheck, ArrowRight, MessageSquare, Building2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import './ProjectWorkspace.css';
+import { getSession } from '../../utils/session';
 
 export default function ProjectWorkspace() {
   const navigate = useNavigate();
   const { id } = useParams();
+  const session = getSession();
   
   const [project, setProject] = useState<any>(null);
   const [link, setLink] = useState('https://docs.google.com/spreadsheets/d/1A9xK_89qLz-nex');
@@ -34,7 +36,7 @@ export default function ProjectWorkspace() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          student_id: 1, // Mock student ID
+          student_id: session?.id || 1,
           link,
           notes
         })

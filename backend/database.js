@@ -16,7 +16,18 @@ async function setupDatabase() {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,
       email TEXT UNIQUE NOT NULL,
+      password TEXT NOT NULL,
       type TEXT NOT NULL, -- 'student' or 'business'
+      -- Student fields
+      university TEXT,
+      course TEXT,
+      year_of_study TEXT,
+      bio TEXT,
+      -- Business fields
+      company_name TEXT,
+      industry TEXT,
+      company_size TEXT,
+      website TEXT,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
 

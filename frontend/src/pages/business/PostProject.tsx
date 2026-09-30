@@ -3,9 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { Zap, Building2, CheckCircle2, Lock, X, Rocket, Compass, FolderKanban, PlusCircle, User } from 'lucide-react';
 import toast from 'react-hot-toast';
 import './PostProject.css';
+import { getSession } from '../../utils/session';
 
 export default function PostProject() {
   const navigate = useNavigate();
+  const session = getSession();
   const [duration, setDuration] = useState('3 days');
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -24,7 +26,7 @@ export default function PostProject() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          business_id: 1, // Mock business ID
+          business_id: session?.id || 1,
           title,
           description,
           budget: parseInt(budget.replace(/,/g, '')),
@@ -74,7 +76,7 @@ export default function PostProject() {
           <div className="biz-left">
             <div className="biz-icon"><Building2 size={20} /></div>
             <div className="biz-info">
-              <h4>Apex Ventures Ltd</h4>
+              <h4>{session?.company_name || session?.name || 'Your Business'}</h4>
               <span className="biz-meta"><CheckCircle2 size={12} /> Verified Business Account</span>
             </div>
           </div>
