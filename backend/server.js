@@ -24,7 +24,7 @@ app.post('/api/auth/register', async (req, res) => {
   try {
     const { name, email, password, type,
             // Student fields
-            university, course, year_of_study, bio,
+            university, course, year_of_study, bio, skills,
             // Business fields
             company_name, industry, company_size, website } = req.body;
 
@@ -41,9 +41,9 @@ app.post('/api/auth/register', async (req, res) => {
     }
 
     const result = await db.run(
-      `INSERT INTO users (name, email, password, type, university, course, year_of_study, bio, company_name, industry, company_size, website) 
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [name, email, password, type, university || null, course || null, year_of_study || null, bio || null,
+      `INSERT INTO users (name, email, password, type, university, course, year_of_study, bio, skills, company_name, industry, company_size, website) 
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [name, email, password, type, university || null, course || null, year_of_study || null, bio || null, skills || null,
        company_name || null, industry || null, company_size || null, website || null]
     );
     
@@ -99,7 +99,7 @@ app.get('/api/users/:id/dashboard', async (req, res) => {
     const db = await getDBConnection();
     
     const user = await db.get(
-      `SELECT name, university, course, year_of_study, bio FROM users WHERE id = ?`,
+      `SELECT name, university, course, year_of_study, bio, skills FROM users WHERE id = ?`,
       studentId
     );
     
@@ -130,6 +130,7 @@ app.get('/api/users/:id/dashboard', async (req, res) => {
         university: user ? user.university : null,
         course: user ? user.course : null,
         bio: user ? user.bio : null,
+        skills: user ? user.skills : null,
       },
       stats: {
         earnings: stats.total_earnings || 0,
@@ -139,6 +140,17 @@ app.get('/api/users/:id/dashboard', async (req, res) => {
       },
       history
     });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/api/users/:id/skills', async (req, res) => {
+  try {
+    const { skills } = req.body;
+    const db = await getDBConnection();
+    await db.run('UPDATE users SET skills = ? WHERE id = ?', [skills.join(', '), req.params.id]);
+    res.json({ success: true });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

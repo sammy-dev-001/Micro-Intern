@@ -54,12 +54,23 @@ export default function StudentDashboard() {
   const navigate = useNavigate();
   const session = getSession();
   const [data, setData] = useState<any>(null);
-  const [skills, setSkills] = useState(['Excel', 'Data Entry', 'Data Cleaning', 'Google Sheets', 'Python Basics']);
+  const [skills, setSkills] = useState<string[]>([]);
 
-  const handleAddSkill = () => {
+  const handleAddSkill = async () => {
     const newSkill = window.prompt("Enter a new skill:");
     if (newSkill && newSkill.trim()) {
-      setSkills([...skills, newSkill.trim()]);
+      const updatedSkills = [...skills, newSkill.trim()];
+      setSkills(updatedSkills);
+      try {
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+        await fetch(`${apiUrl}/api/users/${session?.id}/skills`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ skills: updatedSkills })
+        });
+      } catch (err) {
+        console.error("Failed to save skills", err);
+      }
     }
   };
 
@@ -72,7 +83,13 @@ export default function StudentDashboard() {
       try {
         const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
         const res = await fetch(`${apiUrl}/api/users/${session.id}/dashboard`);
-        if (res.ok) setData(await res.json());
+        if (res.ok) {
+          const dashboardData = await res.json();
+          setData(dashboardData);
+          if (dashboardData.user?.skills) {
+            setSkills(dashboardData.user.skills.split(',').map((s: string) => s.trim()));
+          }
+        }
       } catch (err) {
         console.error("Failed to fetch dashboard", err);
       }
@@ -126,9 +143,9 @@ export default function StudentDashboard() {
             </div>
             <div className="profile-info">
               <h1>{data.user?.name || 'Loading...'} <VerifiedCheck /></h1>
-              <p className="subtitle">Computer Science Undergraduate • Data & Excel Specialist</p>
+              <p className="subtitle">{data.user?.course || 'Undergraduate'} {data.user?.bio ? `• ${data.user.bio}` : ''}</p>
               <div className="uni-row">
-                <GradCapIconMini /> University of Lagos
+                <GradCapIconMini /> {data.user?.university || 'University'}
               </div>
             </div>
           </div>

@@ -61,6 +61,7 @@ export default function AuthPage() {
   const [course, setCourse] = useState('');
   const [yearOfStudy, setYearOfStudy] = useState('');
   const [bio, setBio] = useState('');
+  const [skills, setSkills] = useState('');
   // Business-specific
   const [companyName, setCompanyName] = useState('');
   const [industry, setIndustry] = useState('');
@@ -114,6 +115,7 @@ export default function AuthPage() {
         body.course = course;
         body.year_of_study = yearOfStudy;
         body.bio = bio;
+        body.skills = skills;
       } else {
         body.company_name = companyName;
         body.industry = industry;
@@ -271,6 +273,10 @@ export default function AuthPage() {
                     <option>500 Level</option>
                     <option>Graduate / Postgrad</option>
                   </select>
+                </div>
+                <div className="form-group" style={{ gridColumn: 'span 2' }}>
+                  <label>Skills <span style={{ color: '#94a3b8', fontSize: '11px' }}>Optional, comma-separated</span></label>
+                  <input type="text" placeholder="e.g. Excel, Python, Data Entry" value={skills} onChange={e => setSkills(e.target.value)} />
                 </div>
                 <div className="form-group" style={{ gridColumn: 'span 2' }}>
                   <label>Short Bio <span style={{ color: '#94a3b8', fontSize: '11px' }}>Optional</span></label>

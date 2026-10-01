@@ -23,6 +23,7 @@ async function setupDatabase() {
       course TEXT,
       year_of_study TEXT,
       bio TEXT,
+      skills TEXT,
       -- Business fields
       company_name TEXT,
       industry TEXT,

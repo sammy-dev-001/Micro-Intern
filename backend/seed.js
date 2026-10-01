@@ -17,7 +17,7 @@ async function seed() {
       email TEXT UNIQUE NOT NULL,
       password TEXT NOT NULL,
       type TEXT NOT NULL,
-      university TEXT, course TEXT, year_of_study TEXT, bio TEXT,
+      university TEXT, course TEXT, year_of_study TEXT, bio TEXT, skills TEXT,
       company_name TEXT, industry TEXT, company_size TEXT, website TEXT,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
@@ -57,10 +57,10 @@ async function seed() {
 
   console.log("Adding mock users...");
   // student
-  await db.run(`INSERT INTO users (name, email, password, type, university, course, year_of_study, bio) 
+  await db.run(`INSERT INTO users (name, email, password, type, university, course, year_of_study, bio, skills) 
     VALUES ('Tobi Adebayo', 'tobi@university.edu.ng', 'password123', 'student', 
             'University of Lagos', 'Computer Science', '300 Level', 
-            'Data enthusiast. Excel wizard. Ready to get things done.')`);
+            'Data enthusiast. Excel wizard. Ready to get things done.', 'Excel, Data Entry, Data Cleaning, Google Sheets, Python Basics')`);
   
   // businesses
   await db.run(`INSERT INTO users (name, email, password, type, company_name, industry, company_size) 
