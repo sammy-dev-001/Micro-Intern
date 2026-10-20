@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MicroIntern Verified Certificate</title>
+  <style>
+    @page {
+      size: A4 portrait;
+      margin: 16mm;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: #0f172a;
+      background: #ffffff;
+      line-height: 1.5;
+      font-size: 13px;
+    }
+    .cert-container {
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 32px;
+      position: relative;
+      background: #ffffff;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 2px solid #0284c7;
+      padding-bottom: 18px;
+      margin-bottom: 24px;
+    }
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .logo-badge {
+      background: #0284c7;
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 18px;
+      padding: 6px 14px;
+      border-radius: 8px;
+      letter-spacing: -0.5px;
+    }
+    .brand-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #0f172a;
+      letter-spacing: -0.5px;
+    }
+    .brand-sub {
+      font-size: 11px;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .cert-meta {
+      text-align: right;
+    }
+    .cert-id {
+      font-size: 13px;
+      font-weight: 600;
+      color: #0284c7;
+      font-family: monospace;
+    }
+    .cert-date {
+      font-size: 11px;
+      color: #64748b;
+      margin-top: 3px;
+    }
+    .hero {
+      text-align: center;
+      margin: 20px 0 24px 0;
+    }
+    .hero-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #0284c7;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .recipient-name {
+      font-size: 26px;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.5px;
+      margin-bottom: 4px;
+    }
+    .recipient-sub {
+      font-size: 13px;
+      color: #475569;
+    }
+    .summary-bar {
+      display: flex;
+      justify-content: space-around;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 24px;
+    }
+    .summary-item {
+      text-align: center;
+    }
+    .summary-val {
+      font-size: 16px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+    .summary-lbl {
+      font-size: 11px;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .section-title {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #334155;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .skills-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+    .skill-chip {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: #1e40af;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .skill-chip.verified {
+      background: #f0fdf4;
+      border-color: #bbf7d0;
+      color: #166534;
+    }
+    .check-icon {
+      font-size: 11px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 24px;
+      font-size: 12px;
+    }
+    th {
+      background: #f1f5f9;
+      color: #475569;
+      font-weight: 600;
+      text-align: left;
+      padding: 8px 10px;
+      border-bottom: 1px solid #cbd5e1;
+    }
+    td {
+      padding: 8px 10px;
+      border-bottom: 1px solid #e2e8f0;
+      color: #1e293b;
+    }
+    tr:nth-child(even) td {
+      background: #fafafa;
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .badge-diff {
+      background: #e0f2fe;
+      color: #0369a1;
+    }
+    .badge-manual {
+      background: #f3f4f6;
+      color: #374151;
+    }
+    .footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px dashed #cbd5e1;
+      padding-top: 16px;
+      margin-top: 20px;
+    }
+    .footer-left {
+      max-width: 75%;
+    }
+    .footer-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 2px;
+    }
+    .footer-desc {
+      font-size: 10px;
+      color: #64748b;
+      margin-bottom: 4px;
+    }
+    .hash-text {
+      font-family: monospace;
+      font-size: 9px;
+      color: #475569;
+      background: #f1f5f9;
+      padding: 3px 6px;
+      border-radius: 4px;
+      word-break: break-all;
+      display: inline-block;
+    }
+    .footer-qr {
+      text-align: center;
+    }
+    .qr-img {
+      width: 72px;
+      height: 72px;
+      display: block;
+      margin: 0 auto 3px auto;
+    }
+    .qr-caption {
+      font-size: 9px;
+      color: #64748b;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="cert-container">
+    <div class="header">
+      <div class="brand-logo">
+        <div class="logo-badge">MCI</div>
+        <div>
+          <div class="brand-title">MicroIntern</div>
+          <div class="brand-sub">Practical Work Credential</div>
+        </div>
+      </div>
+      <div class="cert-meta">
+        <div class="cert-id">{{SLUG}}</div>
+        <div class="cert-date">Issued: {{ISSUED_AT}}</div>
+      </div>
+    </div>
+
+    <div class="hero">
+      <div class="hero-label">Verified Certificate of Practical Competence</div>
+      <div class="recipient-name">{{TALENT_NAME}}</div>
+      <div class="recipient-sub">{{TALENT_SUBTITLE}}</div>
+    </div>
+
+    <div class="summary-bar">
+      <div class="summary-item">
+        <div class="summary-val">{{TASKS_COMPLETED_COUNT}}</div>
+        <div class="summary-lbl">Tasks Completed</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-val">{{TOTAL_EARNED_FORMATTED}}</div>
+        <div class="summary-lbl">Escrow Paid</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-val">{{VERIFIED_SKILLS_COUNT}}</div>
+        <div class="summary-lbl">Skills Verified</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-val">{{AVG_RATING_FORMATTED}}</div>
+        <div class="summary-lbl">Client Rating</div>
+      </div>
+    </div>
+
+    <div class="section-title">Verified Capabilities</div>
+    <div class="skills-wrap">
+      {{SKILLS_HTML}}
+    </div>
+
+    <div class="section-title">Verified Project Deliverables</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Project / Role</th>
+          <th>Type</th>
+          <th>Business / Mentor</th>
+          <th>Verification</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{PROJECTS_TABLE_HTML}}
+      </tbody>
+    </table>
+
+    <div class="footer">
+      <div class="footer-left">
+        <div class="footer-title">Tamper-Proof Verification</div>
+        <div class="footer-desc">
+          This credential reflects paid micro-internship deliverables verified via automated data validation and client sign-off.
+        </div>
+        <div>
+          <span class="hash-text">{{SNAPSHOT_HASH}}</span>
+        </div>
+      </div>
+      <div class="footer-qr">
+        <img class="qr-img" src="{{QR_DATA_URI}}" alt="QR Code" />
+        <div class="qr-caption">Scan to Verify</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

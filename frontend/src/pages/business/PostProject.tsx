@@ -195,7 +195,7 @@ export default function PostProject() {
           <PlusCircleIcon />
           <span>Post</span>
         </button>
-        <button className="nav-item" onClick={() => navigate('/student/dashboard')}>
+        <button className="nav-item" onClick={() => navigate('/business/dashboard')}>
           <User size={20} />
           <span>Profile</span>
         </button>

@@ -108,7 +108,7 @@ export default function ViewApplicants() {
                   <img src={`https://i.pravatar.cc/150?u=${app.student_id}`} alt="Student" className="candidate-avatar" />
                   <div className="candidate-info">
                     <h2>{app.student_name || 'Student'} {idx === 0 && <span className="tag-top-match">Top Match</span>}</h2>
-                    <p>Applicant</p>
+                    <p>{app.course || 'Undergraduate'} • {app.university || 'University'}</p>
                     <div className="candidate-rating">
                       <Star size={12} className="star-icon" fill="currentColor" /> 5.0
                     </div>
@@ -128,7 +128,13 @@ export default function ViewApplicants() {
               </div>
               
               <div className="candidate-skills">
-                <span className="skill-tag">General</span>
+                {app.skills ? (
+                  app.skills.split(',').map((skill: string, i: number) => (
+                    <span key={i} className="skill-tag">{skill.trim()}</span>
+                  ))
+                ) : (
+                  <span className="skill-tag">General</span>
+                )}
               </div>
               
               <button 
