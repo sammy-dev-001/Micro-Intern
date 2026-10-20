@@ -254,7 +254,7 @@ app.get('/api/projects/:id/applications', async (req, res) => {
   try {
     const db = await getDBConnection();
     const applications = await db.all(`
-      SELECT a.*, u.name as student_name, u.university, u.course
+      SELECT a.*, u.name as student_name, u.university, u.course, u.skills
       FROM applications a 
       JOIN users u ON a.student_id = u.id 
       WHERE a.project_id = ?
