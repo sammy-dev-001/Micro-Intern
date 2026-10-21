@@ -1,55 +1,39 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { Toaster } from 'react-hot-toast';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Navbar } from './components/Navbar';
+import { Footer } from './components/Footer';
+import { Landing } from './pages/Landing';
+import { Stub } from './pages/Stub';
+import { NotFound } from './pages/NotFound';
+import {CategoryBar} from './components/CategoryBar'
 
-// Pages
-import Home from './pages/Home';
-import SignUpStudent from './pages/auth/SignUpStudent';
-import SignUpBusiness from './pages/auth/SignUpBusiness';
-import StudentProfileSetup from './pages/student/StudentProfileSetup';
-import ProjectList from './pages/student/ProjectList';
-import ProjectDetails from './pages/student/ProjectDetails';
-import StudentDashboard from './pages/student/StudentDashboard';
-import PostProject from './pages/business/PostProject';
-import ViewApplicants from './pages/business/ViewApplicants';
-import BusinessDashboard from './pages/business/BusinessDashboard';
-import ProjectWorkspace from './pages/project/ProjectWorkspace';
-import ProjectCompletion from './pages/project/ProjectCompletion';
-
-function App() {
+export default function App() {
   return (
-    <Router>
-      <Toaster position="top-center" toastOptions={{ style: { fontSize: '14px', fontWeight: 600 } }} />
-      <div className="app-container">
-        <main className="main-content">
+    <BrowserRouter>
+      <div className="flex min-h-screen flex-col">
+        <Navbar />
+<CategoryBar />
+
+        <main className="flex-1">
           <Routes>
-            {/* Redirect / to student signup for demo purposes */}
-            <Route path="/" element={<Navigate to="/auth/student/signup" />} />
-            <Route path="/home" element={<Home />} />
-            
-            {/* Auth */}
-            <Route path="/auth/student/signup" element={<SignUpStudent />} />
-            <Route path="/auth/business/signup" element={<SignUpBusiness />} />
+            <Route path="/" element={<Landing />} />
+            <Route path="/tasks" element={<Stub title="Marketplace" note="Coming soon." />} />
+            <Route path="/login" element={<Stub title="Log in" note="Auth is next." />} />
+            <Route path="/signup" element={<Stub title="Sign up" note="Auth is next." />} />
+            <Route path="/contact" element={<Stub title="Contact" note="Coming soon." />} />
+            <Route path="/terms" element={<Stub title="Terms" note="Draft pending." />} />
+            <Route path="/privacy" element={<Stub title="Privacy" note="Draft pending." />} />
+            <Route path="/sample-profile" element={<Stub title="Sample profile" note="Coming soon." />} />
 
-            {/* Student Flows */}
-            <Route path="/student/dashboard" element={<StudentDashboard />} />
-            <Route path="/student/profile/setup" element={<StudentProfileSetup />} />
-            <Route path="/projects" element={<ProjectList />} />
-            <Route path="/projects/:id" element={<ProjectDetails />} />
+            {/* Redirects per §9 */}
+            <Route path="/how-it-works" element={<Navigate to="/#how-it-works" replace />} />
+            <Route path="/for-talent" element={<Navigate to="/#for-talent" replace />} />
+            <Route path="/for-business" element={<Navigate to="/#for-business" replace />} />
 
-            {/* Business Flows */}
-            <Route path="/business/dashboard" element={<BusinessDashboard />} />
-            <Route path="/business/project/new" element={<PostProject />} />
-            <Route path="/business/project/:id/applicants" element={<ViewApplicants />} />
-
-            {/* Active Project Workspace & Completion */}
-            <Route path="/workspace/:id" element={<ProjectWorkspace />} />
-            <Route path="/workspace/:id/completion" element={<ProjectCompletion />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </main>
+        <Footer />
       </div>
-    </Router>
+    </BrowserRouter>
   );
 }
-
-export default App;

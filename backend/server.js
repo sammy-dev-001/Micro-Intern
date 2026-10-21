@@ -1,8 +1,5 @@
-/**
- * MicroIntern Backend Entrypoint (v2.1)
- * Restructured from prototype-v1 into modular architecture.
- */
 
+// const {dotenv} = require 'dotenv';
 const { startServer } = require('./server/app');
 
 const PORT = process.env.PORT || 3001;

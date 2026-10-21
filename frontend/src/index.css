@@ -1,130 +1,142 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-:root {
-  /* MicroIntern Design System */
-  --bg-main: #f8f9fa; /* Light off-white background */
-  --bg-card: #ffffff;
-  --bg-input: #ffffff;
-  --bg-light-blue: #f0f4f8;
-  --bg-green-light: #6ee7b7; /* Minty green for success banners */
-  --bg-green-pale: #d1fae5;
-  
-  --text-dark: #0f172a;
-  --text-gray: #64748b;
-  --text-light-gray: #94a3b8;
-  --text-green: #047857;
-
-  --border-light: #e2e8f0;
-  
-  --primary-btn: #000000;
-  --primary-btn-text: #ffffff;
-  
-  --font-main: 'Inter', sans-serif;
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+/* ---------------------------------------------------------------- */
+/* Font — self-hosted Plus Jakarta Sans (variable)                  */
+/* Place the woff2 at /public/fonts/plus-jakarta-sans-variable.woff2 */
+/* Get it from @fontsource/plus-jakarta-sans or Google Fonts.       */
+/* ---------------------------------------------------------------- */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  src: url('/fonts/plus-jakarta-sans-variable.woff2') format('woff2-variations');
+  font-weight: 200 800;
+  font-style: normal;
+  font-display: swap;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+/* ---------------------------------------------------------------- */
+/* Base                                                             */
+/* ---------------------------------------------------------------- */
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  /* Respect reduced motion for the reveal animation and smooth scroll */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    [data-reveal] {
+      opacity: 1 !important;
+      transform: none !important;
+      animation: none !important;
+    }
+  }
+
+  body {
+    @apply bg-paper text-ink font-sans antialiased;
+    font-feature-settings: 'ss01', 'cv11';
+  }
+
+  /* Tabular figures for anything holding a naira amount */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum';
+  }
+
+  /* Focus ring — the brief's 2px Indigo, offset 2px, applied globally */
+  :focus-visible {
+  outline: 4px solid theme('colors.brand.DEFAULT');
+  outline-offset: 3px;
+  border-radius: 2px;
+  box-shadow: 0 0 0 5px theme('colors.paper');
 }
 
-body {
-  font-family: var(--font-main);
-  background-color: var(--bg-main);
-  color: var(--text-dark);
-  -webkit-font-smoothing: antialiased;
-}
-
-/* Layout Utilities */
-.app-container {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  align-items: center;
-}
-
-.main-content {
-  width: 100%;
-  max-width: 100%;
-  margin: 0 auto;
-  min-height: 100vh;
-  background-color: var(--bg-main);
-  position: relative;
-  padding-bottom: 80px; /* For bottom nav */
-}
-
-/* Typography */
-h1, h2, h3, h4 {
-  color: var(--text-dark);
-  font-weight: 600;
-}
-
-p {
-  color: var(--text-gray);
-  line-height: 1.5;
-}
-
-/* Inputs & Buttons */
-input {
-  width: 100%;
-  padding: 14px 16px;
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-sm);
-  font-size: 14px;
-  font-family: var(--font-main);
+:focus:not(:focus-visible) {
   outline: none;
-  transition: border-color 0.2s;
+  box-shadow: none;
 }
 
-input:focus {
-  border-color: var(--text-dark);
+  /* Better heading defaults — display weight is opted in per-component */
+  h1, h2, h3, h4 {
+    @apply font-extrabold tracking-tight text-ink;
+  }
 }
 
-.btn-primary {
-  background-color: var(--primary-btn);
-  color: var(--primary-btn-text);
-  border: none;
-  border-radius: var(--radius-sm);
-  padding: 16px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-  transition: transform 0.1s;
-}
-.btn-primary:active {
-  transform: scale(0.98);
+/* ---------------------------------------------------------------- */
+/* Scroll-into-view reveal                                          */
+/* Usage:                                                           */
+/*   <div data-reveal>…</div>          → reveals when in viewport   */
+/*   <div data-reveal="stagger">…</div> → children stagger (opt in) */
+/* The JS hook (useReveal) toggles .is-revealed. Nothing animates    */
+/* until JS runs, so no-JS users see content immediately.           */
+/* ---------------------------------------------------------------- */
+@layer components {
+  [data-reveal] {
+    opacity: 0;
+    transform: translateY(16px);
+    transition:
+      opacity 1600ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: opacity, transform;
+  }
+
+  [data-reveal].is-revealed {
+    opacity: 1;
+    transform: translateY(0);
+    will-change: auto;
+  }
+
+  /* Optional stagger — children fade up sequentially */
+  [data-reveal="stagger"].is-revealed > * {
+    animation: reveal-up 1000ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  [data-reveal="stagger"].is-revealed > *:nth-child(1) { animation-delay: 0ms; }
+  [data-reveal="stagger"].is-revealed > *:nth-child(2) { animation-delay: 80ms; }
+  [data-reveal="stagger"].is-revealed > *:nth-child(3) { animation-delay: 160ms; }
+  [data-reveal="stagger"].is-revealed > *:nth-child(4) { animation-delay: 240ms; }
+  [data-reveal="stagger"].is-revealed > *:nth-child(5) { animation-delay: 320ms; }
+
+  /* Section rhythm — matches the brief's py-24 desktop / py-16 mobile */
+  .section {
+    @apply py-16 lg:py-24;
+  }
+
+  /* Container — 1200px, 24px side padding */
+  .container-page {
+    @apply mx-auto w-full max-w-container px-6;
+  }
+
+  /* Utility label — used for pill tags, "PROOF OF WORK", footer headers */
+  .label-utility {
+    @apply text-xs font-semibold uppercase tracking-wider;
+  }
 }
 
-.btn-outline {
-  background-color: transparent;
-  border: 1px solid var(--border-light);
-  color: var(--text-dark);
-  border-radius: var(--radius-sm);
-  padding: 12px 16px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
+/* ---------------------------------------------------------------- */
+/* Utilities                                                        */
+/* ---------------------------------------------------------------- */
+@layer utilities {
+  /* Guard against horizontal scroll at 320px — brief §10 */
+  .no-x-scroll {
+    overflow-x: hidden;
+  }
+
+  /* Text balance for headings — good browser support, no downside */
+  .text-balance {
+    text-wrap: balance;
+  }
 }
 
-/* Cards */
-.card {
-  background: var(--bg-card);
-  border-radius: var(--radius-md);
-  padding: 20px;
-  box-shadow: var(--shadow-sm);
+@layer utilities {
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
 }
