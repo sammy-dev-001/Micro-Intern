@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Container } from './Container';
 import { cn } from '../lib/cn';
@@ -47,9 +47,48 @@ const categories: Category[] = [
   },
 ];
 
+const DROPDOWN_WIDTH = 256; // must match the dropdown's w-64
+const GAP = 8;
+
+type DropdownPos = { top: number; left: number };
+
 export function CategoryBar() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [pos, setPos] = useState<DropdownPos | null>(null);
   const barRef = useRef<HTMLDivElement>(null);
+
+  // Compute dropdown position from the button's rect on open, and keep it
+  // correct while the user scrolls the category strip or resizes the window.
+  useLayoutEffect(() => {
+    if (openIndex === null) {
+      setPos(null);
+      return;
+    }
+    const button = document.querySelector<HTMLButtonElement>(
+      `[data-category-btn="${openIndex}"]`
+    );
+    if (!button) return;
+
+    function compute() {
+      if (!button) return;
+      const rect = button.getBoundingClientRect();
+      // Prefer anchoring to the button's left edge. If that would push the
+      // dropdown past the right viewport edge, anchor to the right instead.
+      const wouldOverflowRight = rect.left + DROPDOWN_WIDTH + GAP > window.innerWidth;
+      const left = wouldOverflowRight
+        ? Math.max(GAP, rect.right - DROPDOWN_WIDTH)
+        : rect.left;
+      setPos({ top: rect.bottom + GAP, left });
+    }
+
+    compute();
+    window.addEventListener('scroll', compute, true); // capture scroll on any ancestor
+    window.addEventListener('resize', compute);
+    return () => {
+      window.removeEventListener('scroll', compute, true);
+      window.removeEventListener('resize', compute);
+    };
+  }, [openIndex]);
 
   // Close on outside click
   useEffect(() => {
@@ -72,21 +111,13 @@ export function CategoryBar() {
   }, [openIndex]);
 
   return (
-    <div
-      ref={barRef}
-      className="border-b border-paper/15 bg-brand text-paper"
-    >
+    <div ref={barRef} className="border-b border-paper/15 bg-brand text-paper">
       <Container>
         <nav aria-label="Categories" className="relative">
-          {/*
-            On mobile, this is a horizontally scrollable strip. On lg+, it's
-            a flex row that fits. The `no-scrollbar` utility hides the
-            scrollbar visually but keeps the scroll behaviour.
-          */}
           <ul
             className={cn(
-              'flex items-center gap-1 overflow-x-auto no-scrollbar',
-              'h-12 lg:overflow-visible'
+              'flex items-center gap-1 no-scrollbar h-12',
+              'overflow-x-auto lg:overflow-visible'
             )}
           >
             {categories.map((cat, i) => {
@@ -95,6 +126,7 @@ export function CategoryBar() {
                 <li key={cat.label} className="relative shrink-0">
                   <button
                     type="button"
+                    data-category-btn={i}
                     aria-expanded={open}
                     aria-haspopup="true"
                     onClick={() => setOpenIndex(open ? null : i)}
@@ -122,37 +154,41 @@ export function CategoryBar() {
                       />
                     </svg>
                   </button>
-
-                  {open && (
-                    <div
-                      role="menu"
-                      className={cn(
-                        'absolute left-0 top-full z-30 mt-1 w-64',
-                        'rounded-md border border-chalk bg-paper p-2 shadow-lg'
-                      )}
-                    >
-                      <ul>
-                        {cat.children.map((sub) => (
-                          <li key={sub}>
-                            <Link
-                              to={`/tasks?category=${encodeURIComponent(cat.label)}&sub=${encodeURIComponent(sub)}`}
-                              role="menuitem"
-                              onClick={() => setOpenIndex(null)}
-                              className="block rounded px-3 py-2 text-sm text-ink/80 transition-colors hover:bg-chalk/40 hover:text-ink"
-                            >
-                              {sub}
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
                 </li>
               );
             })}
           </ul>
         </nav>
       </Container>
+
+      {/* Dropdown rendered once, outside the scrolling strip, position: fixed */}
+      {openIndex !== null && pos && (
+        <div
+          role="menu"
+          style={{
+            position: 'fixed',
+            top: pos.top,
+            left: pos.left,
+            width: DROPDOWN_WIDTH,
+          }}
+          className="z-50 rounded-md border border-chalk bg-paper p-2 shadow-lg"
+        >
+          <ul>
+            {categories[openIndex].children.map((sub) => (
+              <li key={sub}>
+                <Link
+                  to={`/tasks?category=${encodeURIComponent(categories[openIndex].label)}&sub=${encodeURIComponent(sub)}`}
+                  role="menuitem"
+                  onClick={() => setOpenIndex(null)}
+                  className="block rounded px-3 py-2 text-sm text-ink/80 transition-colors hover:bg-chalk/40 hover:text-ink"
+                >
+                  {sub}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }

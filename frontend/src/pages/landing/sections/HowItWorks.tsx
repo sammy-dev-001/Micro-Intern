@@ -18,7 +18,7 @@ const steps: Step[] = [
   {
     key: 'assigned',
     label: 'Assigned',
-    description: 'One talent is selected. The money stays locked — nobody can touch it yet.',
+    description: 'One talent is selected. The money stays locked, nobody can touch it yet.',
   },
   {
     key: 'submitted',
@@ -118,7 +118,7 @@ function HorizontalLedger() {
           </span>
 
           {/* Description */}
-          <span className="mt-2 text-xs leading-relaxed text-ink/75">
+          <span className="mt-2 text-xs leading-relaxed text-ink/75 font-bold">
             {step.description}
           </span>
         </li>

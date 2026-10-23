@@ -19,7 +19,7 @@ const roles: Role[] = [
     eyebrow: 'For Talent',
     headline: 'Turn your skills into a record you can point to.',
     bullets: [
-      'Real tasks from real businesses — no "portfolio" theatre.',
+      'Real tasks from real businesses  no "portfolio" theatre.',
       'Paid from escrow the moment work is approved.',
       'Every finished task verifies a skill on your public profile.',
     ],

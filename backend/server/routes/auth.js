@@ -63,7 +63,13 @@ router.post('/register', async (req, res, next) => {
       await db.run(
         `INSERT INTO talent_profiles (user_id, university, course, year_of_study, bio, kyc_status)
          VALUES (?, ?, ?, ?, ?, 'none')`,
-        [userId, validated.university || null, validated.course || null, validated.year_of_study || null, validated.bio || null]
+        [
+          userId,
+          validated.university || null,
+          validated.course || null,
+          validated.year_of_study || null,
+          validated.bio || null,
+        ]
       );
 
       // Handle skills if provided
@@ -71,10 +77,16 @@ router.post('/register', async (req, res, next) => {
         for (const skillName of validated.skills) {
           const trimmed = skillName.trim();
           if (!trimmed) continue;
-          let skill = await db.get('SELECT id FROM skills WHERE LOWER(name) = LOWER(?)', trimmed);
+          const skill = await db.get(
+            'SELECT id FROM skills WHERE LOWER(name) = LOWER(?)',
+            trimmed
+          );
           if (!skill) {
-            const ins = await db.run('INSERT INTO skills (name) VALUES (?)', trimmed);
-            skill = { id: ins.lastID };
+            throw new AppError(
+              `Unknown skill: "${trimmed}". Please choose from the suggested list.`,
+              400,
+              'INVALID_SKILL'
+            );
           }
           await db.run(
             `INSERT OR IGNORE INTO talent_skills (talent_id, skill_id, source) VALUES (?, ?, 'self_declared')`,
@@ -86,16 +98,25 @@ router.post('/register', async (req, res, next) => {
       await db.run(
         `INSERT INTO business_profiles (user_id, company_name, industry, company_size, website)
          VALUES (?, ?, ?, ?, ?)`,
-        [userId, validated.company_name || validated.name, validated.industry || null, validated.company_size || null, validated.website || null]
+        [
+          userId,
+          validated.company_name || validated.name,
+          validated.industry || null,
+          validated.company_size || null,
+          validated.website || null,
+        ]
       );
     }
 
-    const user = await db.get('SELECT id, name, email, type, created_at FROM users WHERE id = ?', userId);
+    const user = await db.get(
+      'SELECT id, name, email, type, created_at FROM users WHERE id = ?',
+      userId
+    );
     const token = generateToken(user);
 
     res.status(201).json({
       user,
-      token
+      token,
     });
   } catch (err) {
     next(err);
