@@ -1,7 +1,6 @@
 import { useState, type SubmitEvent } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Container } from '../../../components/Container';
-import { Button } from '../../../components/Button';
 
 export function Hero() {
   const [query, setQuery] = useState('');
@@ -13,15 +12,28 @@ export function Hero() {
     navigate(q ? `/tasks?q=${encodeURIComponent(q)}` : '/tasks');
   }
 
+
   return (
     <section
       aria-labelledby="hero-heading"
       className="relative overflow-hidden bg-brand text-paper"
     >
-      <DecorativeShapes aria-hidden="true" />
+      {/* Background image */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: "url('/hero.jpg')" }}
+      />
 
-      <Container>
-        <div className="relative z-10 mx-auto flex max-w-3xl flex-col items-center gap-8 py-24 text-center md:py-32">
+      {/* Faint blue overlay — brand-tinted, keeps text readable */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 bg-brand/70"
+      />
+
+
+       <Container>
+        <div className="relative z-10 mx-auto flex max-w-3xl flex-col items-center gap-8 py-24 text-center md:py-32 animate-reveal-up">
           <h1
             id="hero-heading"
             className="text-balance text-paper/85 text-4xl font-extrabold leading-[1.05] tracking-tight md:text-5xl lg:text-6xl"
@@ -94,20 +106,3 @@ function SearchIcon() {
   );
 }
 
-function DecorativeShapes(props: { 'aria-hidden'?: 'true' | boolean }) {
-  return (
-    <div
-      {...props}
-      className="pointer-events-none absolute inset-0 hidden md:block"
-    >
-      <div
-        className="absolute -right-32 top-1/4 h-96 w-72 rounded-3xl bg-paper/10"
-        style={{ transform: 'rotate(-12deg)' }}
-      />
-      <div
-        className="absolute -left-40 bottom-8 h-72 w-64 rounded-3xl bg-brand-700/60"
-        style={{ transform: 'rotate(8deg)' }}
-      />
-    </div>
-  );
-}

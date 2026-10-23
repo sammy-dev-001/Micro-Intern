@@ -1,20 +1,22 @@
 import { Link } from 'react-router-dom';
 import { Container } from '../../../components/Container';
 import { Button } from '../../../components/Button';
+import { DecorativeShapes } from '../../../components/DecorativeShapes';
 import { useReveal } from '../../../lib/useReveal';
 
 export function FinalCta() {
   const revealRef = useReveal<HTMLElement>();
 
   return (
-    <section
+      <section
       ref={revealRef}
       data-reveal
       aria-labelledby="final-cta-heading"
-      className="section bg-brand text-paper"
+      className="section relative overflow-hidden bg-brand text-paper"
     >
-      <Container>
-        <div className="mx-auto flex max-w-2xl flex-col items-center gap-8 text-center">
+      <DecorativeShapes />
+         <Container>
+        <div className="relative z-10 mx-auto flex max-w-2xl flex-col items-center gap-8 text-center">
           <h2
             id="final-cta-heading"
             className="text-balance text-paper/90 text-3xl font-extrabold leading-tight tracking-tight md:text-4xl lg:text-5xl"

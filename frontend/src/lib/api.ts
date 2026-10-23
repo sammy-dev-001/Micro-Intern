@@ -1,5 +1,10 @@
-const BASE = `${import.meta.env.VITE_API_URL ?? 'http://localhost:3001'}/api/v2`;
-const TOKEN_KEY = 'mi_token';
+const BASE = `${import.meta.env.VITE_API_URL ?? "http://localhost:3001"}/api/v2`;
+const TOKEN_KEY = "mi_token";
+
+let onUnauthorized: (() => void) | null = null;
+export function setUnauthorizedHandler(fn: (() => void) | null) {
+  onUnauthorized = fn;
+}
 
 export function getToken(): string | null {
   return localStorage.getItem(TOKEN_KEY);
@@ -15,13 +20,13 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   const token = getToken();
   const headers = new Headers(init.headers);
   if (
-    !headers.has('Content-Type') &&
+    !headers.has("Content-Type") &&
     init.body &&
     !(init.body instanceof FormData)
   ) {
-    headers.set('Content-Type', 'application/json');
+    headers.set("Content-Type", "application/json");
   }
-  if (token) headers.set('Authorization', `Bearer ${token}`);
+  if (token) headers.set("Authorization", `Bearer ${token}`);
 
   const res = await fetch(`${BASE}${path}`, { ...init, headers });
   if (!res.ok) {
@@ -33,6 +38,10 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
     }
     throw new Error(body?.message ?? body?.error ?? `HTTP ${res.status}`);
   }
+  if (res.status === 401) {
+    setToken(null);
+    onUnauthorized?.();
+  }
   if (res.status === 204) return undefined as T;
   return res.json() as Promise<T>;
 }
@@ -41,7 +50,7 @@ export const api = {
   get: <T>(path: string) => request<T>(path),
   post: <T>(path: string, body?: unknown) =>
     request<T>(path, {
-      method: 'POST',
+      method: "POST",
       body: body instanceof FormData ? body : JSON.stringify(body ?? {}),
     }),
 };

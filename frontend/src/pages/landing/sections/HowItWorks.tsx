@@ -118,7 +118,7 @@ function HorizontalLedger() {
           </span>
 
           {/* Description */}
-          <span className="mt-2 text-xs leading-relaxed text-ink/60">
+          <span className="mt-2 text-xs leading-relaxed text-ink/75">
             {step.description}
           </span>
         </li>
@@ -165,7 +165,7 @@ function VerticalLedger() {
             <p className="text-sm font-bold tracking-tight text-ink">
               {step.label}
             </p>
-            <p className="mt-1 text-sm leading-relaxed text-ink/65">
+            <p className="mt-1 text-sm leading-relaxed text-ink/75">
               {step.description}
             </p>
           </div>

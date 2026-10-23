@@ -73,7 +73,7 @@ export function FeaturedTasks() {
             to="/tasks"
             className="shrink-0 text-sm font-semibold text-brand underline-offset-4 hover:underline"
           >
-            Browse all tasks →
+            Browse all tasks 
           </Link>
         </div>
 

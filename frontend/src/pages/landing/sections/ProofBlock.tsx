@@ -48,7 +48,7 @@ export function ProofBlock() {
               to="/sample-profile"
               className="mt-6 inline-flex text-sm font-semibold text-marigold underline-offset-4 hover:underline"
             >
-              See a sample profile →
+              See a sample profile 
             </Link>
           </div>
 

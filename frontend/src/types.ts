@@ -9,3 +9,33 @@ export type EscrowStatus =
   | 'submitted'
   | 'approved'
   | 'released';
+
+  export type UserType = 'talent' | 'business';
+
+export type AuthUser = {
+  id: number | string;
+  name: string;
+  email: string;
+  type: UserType;
+  created_at: string;
+  profile: Record<string, unknown> | null;
+};
+
+export type AuthResponse = {
+  user: AuthUser;
+  token: string;
+};
+
+export type LoginPayload = { email: string; password: string };
+
+export type RegisterPayload = {
+  name: string;
+  email: string;
+  password: string;
+  type: UserType;
+};
+
+
+export type GoogleLoginResponse =
+  | { user: AuthUser; token: string }
+  | { needs_role: true; pending: string };

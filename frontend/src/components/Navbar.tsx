@@ -1,34 +1,43 @@
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Logo } from './Logo';
-import { Button } from './Button';
-import { Container } from './Container';
-import { cn } from '../lib/cn';
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { Logo } from "./Logo";
+import { Button } from "./Button";
+import { Container } from "./Container";
+import { cn } from "../lib/cn";
+import { useAuth } from "../auth/AuthContext";
 
-const links = [
-  { to: '/tasks', label: 'Tasks' },
-  { to: '/how-it-works', label: 'How it works' },
-  { to: '/for-talent', label: 'For Talent' },
-  { to: '/for-business', label: 'For Business' },
+type NavItem = { hash: string; label: string };
+
+
+
+const anchors: NavItem[] = [
+  { hash: "how-it-works", label: "How it works" },
+  { hash: "for-talent", label: "For Talent" },
+  { hash: "for-business", label: "For Business" },
 ];
+
+function scrollToSection(hash: string) {
+  const el = document.getElementById(hash);
+  if (el) {
+    el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+}
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
-
-  // Lock body scroll when the mobile drawer is open
+const { user } = useAuth();
   useEffect(() => {
-    document.body.style.overflow = open ? 'hidden' : '';
+    document.body.style.overflow = open ? "hidden" : "";
     return () => {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     };
   }, [open]);
 
-  // Close on Escape
   useEffect(() => {
     if (!open) return;
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false);
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
   }, [open]);
 
   return (
@@ -38,52 +47,67 @@ export function Navbar() {
           aria-label="Primary"
           className="flex h-16 items-center justify-between gap-6"
         >
-          {/* Logo */}
-         <Link to="/" aria-label="MicroIntern home" className="shrink-0">
-  <Logo size="md" className="lg:hidden" />
-  <Logo size="lg" className="hidden lg:inline-flex" />
-</Link>
+          <Link to="/" aria-label="MicroIntern home" className="shrink-0">
+            <Logo size="md" className="lg:hidden" />
+            <Logo size="lg" className="hidden lg:inline-flex" />
+          </Link>
 
-          {/* Center links — hidden below lg */}
           <ul className="hidden items-center gap-7 lg:flex">
-            {links.map((l) => (
-              <li key={l.to}>
-                <Link
-                  to={l.to}
+            <li>
+              <Link
+                to="/tasks"
+                className="text-sm font-medium text-ink/80 transition-colors hover:text-ink"
+              >
+                Tasks
+              </Link>
+            </li>
+            {anchors.map((a) => (
+              <li key={a.hash}>
+                <button
+                  type="button"
+                  onClick={() => scrollToSection(a.hash)}
                   className="text-sm font-medium text-ink/80 transition-colors hover:text-ink"
                 >
-                  {l.label}
-                </Link>
+                  {a.label}
+                </button>
               </li>
             ))}
           </ul>
 
-          {/* Right cluster — Log In / Sign Up, hidden below lg */}
           <div className="hidden items-center gap-2 lg:flex">
-            <Link to="/login">
-              <Button variant="outline" size="sm">
-                Log In
-              </Button>
-            </Link>
-            <Link to="/signup">
-              <Button variant="secondary" size="sm">
-                Sign Up
-              </Button>
-            </Link>
+            {user ? (
+              <Link to="/dashboard">
+                <Button variant="secondary" size="sm">
+                  Dashboard
+                </Button>
+              </Link>
+            ) : (
+              <>
+                <Link to="/login">
+                  <Button variant="outline" size="sm">
+                    Log In
+                  </Button>
+                </Link>
+                <Link to="/signup">
+                  <Button variant="secondary" size="sm">
+                    Sign Up
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
 
-          {/* Mobile hamburger */}
           <button
             type="button"
-            aria-label={open ? 'Close menu' : 'Open menu'}
+            aria-label={open ? "Close menu" : "Open menu"}
             aria-expanded={open}
             aria-controls="mobile-drawer"
             onClick={() => setOpen((v) => !v)}
             className={cn(
-              'inline-flex h-10 w-10 items-center justify-center rounded-md',
-              'text-ink transition-colors hover:bg-chalk/50',
-              'focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-brand',
-              'lg:hidden'
+              "inline-flex h-10 w-10 items-center justify-center rounded-md",
+              "text-ink transition-colors hover:bg-chalk/50",
+              "focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-brand",
+              "lg:hidden",
             )}
           >
             <HamburgerIcon open={open} />
@@ -91,7 +115,6 @@ export function Navbar() {
         </nav>
       </Container>
 
-      {/* Mobile drawer */}
       {open && (
         <div
           id="mobile-drawer"
@@ -99,29 +122,52 @@ export function Navbar() {
         >
           <Container>
             <ul className="flex flex-col py-2">
-              {links.map((l) => (
-                <li key={l.to}>
-                  <Link
-                    to={l.to}
-                    onClick={() => setOpen(false)}
-                    className="block py-3 text-base font-medium text-ink/85 transition-colors hover:text-ink"
+              <li>
+                <Link
+                  to="/tasks"
+                  onClick={() => setOpen(false)}
+                  className="block py-3 text-base font-medium text-ink/85 transition-colors hover:text-ink"
+                >
+                  Tasks
+                </Link>
+              </li>
+              {anchors.map((a) => (
+                <li key={a.hash}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setOpen(false);
+                      // Let the drawer close first, then scroll.
+                      requestAnimationFrame(() => scrollToSection(a.hash));
+                    }}
+                    className="block w-full py-3 text-left text-base font-medium text-ink/85 transition-colors hover:text-ink"
                   >
-                    {l.label}
-                  </Link>
+                    {a.label}
+                  </button>
                 </li>
               ))}
             </ul>
-            <div className="flex flex-col gap-2 border-t border-chalk py-4">
-              <Link to="/login" onClick={() => setOpen(false)}>
-                <Button variant="outline" size="md" className="w-full">
-                  Log In
-                </Button>
-              </Link>
-              <Link to="/signup" onClick={() => setOpen(false)}>
-                <Button variant="secondary" size="md" className="w-full">
-                  Sign Up
-                </Button>
-              </Link>
+            <div className="hidden items-center gap-2 lg:flex">
+              {user ? (
+                <Link to="/dashboard">
+                  <Button variant="secondary" size="sm">
+                    Dashboard
+                  </Button>
+                </Link>
+              ) : (
+                <>
+                  <Link to="/login">
+                    <Button variant="outline" size="sm">
+                      Log In
+                    </Button>
+                  </Link>
+                  <Link to="/signup">
+                    <Button variant="secondary" size="sm">
+                      Sign Up
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
           </Container>
         </div>
